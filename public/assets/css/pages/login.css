@@ -1,0 +1,21 @@
+.login .logo {
+  width: 170px;
+  height: auto;
+}
+
+.login .content-column {
+  background-color: var(--secondary-color);
+}
+
+@media (min-width: 576px) {
+  .login .logo-wrapper,
+  .content {
+    height: 100vh;
+    margin-bottom: 0;
+  }
+
+  .login input,
+  button.submit {
+    width: 300px;
+  }
+}

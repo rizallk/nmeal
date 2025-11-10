@@ -1,0 +1,18 @@
+.landing .content-wrapper {
+  height: 100vh;
+}
+
+.landing .content img {
+  width: 170px;
+  height: auto;
+}
+
+.landing .btn {
+  width: 130px;
+}
+
+@media (min-width: 576px) {
+  .landing .content {
+    width: 400px;
+  }
+}

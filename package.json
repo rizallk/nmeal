@@ -1,0 +1,15 @@
+{
+  "name": "ci4-browsersync-setup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CodeIgniter 4 + BrowserSync dev setup",
+  "scripts": {
+    "serve": "php spark serve",
+    "watch": "browser-sync start --config bs-config.js",
+    "dev": "concurrently -k \"npm:serve\" \"npm:watch\""
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.4",
+    "concurrently": "^9.0.0"
+  }
+}
