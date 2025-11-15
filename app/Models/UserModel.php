@@ -14,7 +14,7 @@ class UserModel extends Model
   protected $updatedField = 'updated_at';
 
   protected $validationRules = [
-    'nama' => 'required|min_length[3]|max_length[50]',
+    'nama_lengkap' => 'required|min_length[3]|max_length[50]',
     'role' => 'required',
     'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
     'password' => 'required|min_length[6]|max_length[50]',
@@ -22,10 +22,10 @@ class UserModel extends Model
   ];
 
   protected $validationMessages = [
-    'nama' => [
-      'required' => 'Nama wajib diisi.',
-      'min_length' => 'Nama minimal 3 karakter.',
-      'max_length' => 'Nama maksimal 50 karakter.'
+    'nama_lengkap' => [
+      'required' => 'Nama lengkap wajib diisi.',
+      'min_length' => 'Nama lengkap minimal 3 karakter.',
+      'max_length' => 'Nama lengkap maksimal 50 karakter.'
     ],
     'role' => [
       'required' => 'Role wajib dipilih.',

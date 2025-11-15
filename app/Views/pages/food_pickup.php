@@ -2,24 +2,24 @@
 
 <?= $this->section('styles') ?>
 <style>
-  .aktivitas-terkini .table .status {
+  .food-pickup .table .status {
     position: relative;
     width: 40px;
   }
 
-  .aktivitas-terkini .table .form-check-input {
+  .food-pickup .table .form-check-input {
     width: 1.2em;
     height: 1.2em;
   }
 
-  .aktivitas-terkini .table tr td {
+  .food-pickup .table tr td {
     white-space: nowrap;
   }
 </style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="aktivitas-terkini">
+<div class="food-pickup">
   <?php if (session()->getFlashdata('success')): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       <?= session()->getFlashdata('success') ?>
@@ -33,7 +33,7 @@
     </div>
   <?php endif; ?>
   <div class="header mb-1">
-    <form id="search-form" action="<?= site_url('aktivitas-terkini') ?>" method="get">
+    <form id="search-form" action="<?= site_url('food-pickup') ?>" method="get">
       <div class="row">
         <div class="col-md">
           <div class="row mb-3">
@@ -41,9 +41,11 @@
             <div class="col-sm">
               <select class="form-select" id="kelas" name="kelas" aria-label="Pilih Kelas" onchange="this.form.submit()">
                 <option value="" <?= empty($kelasFilter) ? 'selected' : '' ?>>Pilih Kelas</option>
-                <option value="Kelas 1" <?= $kelasFilter == 'Kelas 1' ? 'selected' : '' ?>>Kelas 1</option>
-                <option value="Kelas 2" <?= $kelasFilter == 'Kelas 2' ? 'selected' : '' ?>>Kelas 2</option>
-                <option value="Kelas 3" <?= $kelasFilter == 'kelas 3' ? 'selected' : '' ?>>Kelas 3</option>
+                <option value="1" <?= $kelasFilter == '1' ? 'selected' : '' ?>>Kelas 1</option>
+                <option value="2" <?= $kelasFilter == '2' ? 'selected' : '' ?>>Kelas 2</option>
+                <option value="3" <?= $kelasFilter == '3' ? 'selected' : '' ?>>Kelas 3</option>
+                <option value="4" <?= $kelasFilter == '4' ? 'selected' : '' ?>>Kelas 4</option>
+                <option value="5" <?= $kelasFilter == '5' ? 'selected' : '' ?>>Kelas 5</option>
               </select>
             </div>
           </div>
@@ -70,7 +72,7 @@
     </form>
     <hr class="mt-0">
     <?php if (!empty($kelasFilter)): ?>
-      <button class="btn btn-sm btn-warning mb-3"><b>INFO :</b> Pengambilan untuk hari ini (<b><?= formatTanggalIndo(date("d-m-Y")) ?></b>)</button>
+      <button class="btn btn-sm btn-warning mb-3"><b>INFO :</b> Pengambilan makanan untuk hari ini (<b><?= formatTanggalIndo(date("d-m-Y")) ?></b>)</button>
     <?php endif; ?>
   </div>
   <?php if (empty($kelasFilter)): ?>
@@ -80,14 +82,16 @@
     </div>
   <?php else: ?>
     <div class="table-responsive">
-      <table class="table table-striped table-bordered table mb-0">
+      <table class="table table-striped table-bordered table-hover mb-0">
         <thead class="table-light">
           <tr>
             <th style="width: 40px;">No</th>
             <th class="text-center status">
               <div class="form-check">
                 <div class="d-flex justify-content-center">
-                  <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                  <div class="bg-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+                    <input class="form-check-input" type="checkbox" value="" id="checkedAll">
+                  </div>
                 </div>
               </div>
               </td>
@@ -107,7 +111,7 @@
         </thead>
         <tbody>
           <?php if (!empty($data)): ?>
-            <?php $no = $startNumber; ?>
+            <?php $no = 0; ?>
             <?php foreach ($data as $d): ?>
               <tr>
                 <td><?= ++$no ?></td>
@@ -118,7 +122,7 @@
                     </div>
                   </div>
                 </td>
-                <td><?= esc($d['nama']) ?></td>
+                <td><?= esc($d['nama_siswa']) ?></td>
                 <td><?= esc($d['status']) ?></td>
                 <td><?= esc($d['laporan']) ?></td>
               </tr>
@@ -131,13 +135,6 @@
         </tbody>
       </table>
     </div>
-
-    <?php if ($pager): ?>
-      <div class="d-flex justify-content-center mt-3">
-        <?= $pager->links('default', 'pagination') ?>
-      </div>
-    <?php endif; ?>
-
   <?php endif; ?>
 </div>
 <?= $this->endSection() ?>

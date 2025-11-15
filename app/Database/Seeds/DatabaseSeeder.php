@@ -11,15 +11,16 @@ class DatabaseSeeder extends Seeder
    * dalam urutan yang benar.
    *
    * Perintah CLI untuk menjalankan:
-   * php spark db:seed
+   * php spark db:seed DatabaseSeeder
    */
   public function run()
   {
-    // Panggil seeder dengan urutan yang benar
-    // untuk menghindari error foreign key
+    // Panggil seeder dengan urutan yang benar untuk menghindari error foreign key
     $this->call('UserSeeder');
+    $this->call('IngredientSeeder');
+    $this->call('AllergenSeeder');
     $this->call('FoodSeeder');
     $this->call('StudentSeeder');
-    $this->call('ActivitySeeder');
+    $this->call('FoodPickupSeeder');
   }
 }

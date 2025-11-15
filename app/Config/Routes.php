@@ -15,8 +15,8 @@ $routes->get('/logout', 'AuthController::logout');
 // Dashboard
 $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authcheck']);
 
-// Aktivitas terkini
-$routes->get('/aktivitas-terkini', 'AktivitasTerkiniController::index', ['filter' => 'authcheck']);
+// Pengambilan makanan
+$routes->get('/food-pickup', 'FoodPickupController::index', ['filter' => 'authcheck']);
 
 // Daftar user
 $routes->get('/daftar-user', 'DaftarUserController::index', ['filter' => 'authcheck']);

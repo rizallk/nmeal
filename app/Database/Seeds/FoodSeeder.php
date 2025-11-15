@@ -6,75 +6,63 @@ use CodeIgniter\Database\Seeder;
 
 class FoodSeeder extends Seeder
 {
-  /**
-   * Menjalankan proses seeding untuk tabel 'foods'.
-   *
-   * Perintah CLI untuk menjalankan seeder ini:
-   * php spark db:seed FoodSeeder
-   */
   public function run()
   {
-    // Data dummy untuk menu makanan bergizi
     $data = [
+      // --- Kumpulan Menu Nasi, Lauk Utama ---
       [
-        'nama_menu'      => 'Nasi Ayam Bakar & Tumis Kangkung',
-        'bahan_1'        => 'Nasi Putih',
-        'bahan_2'        => 'Ayam Bakar (Paha)',
-        'bahan_3'        => 'Tahu Goreng',
-        'bahan_4'        => 'Tumis Kangkung',
-        'bahan_5'        => 'Buah Pisang',
-        'bahan_6'        => null,
-        'created_at'     => '2024-05-10 08:15:00',
-        'updated_at'     => '2024-05-10 08:15:00',
+        'name' => 'Nasi, Ayam Goreng Lengkuas, Tumis Buncis Wortel',
+        'created_at' => '2024-08-01 09:00:00',
+        'updated_at' => '2024-08-01 09:00:00'
       ],
       [
-        'nama_menu'      => 'Nasi Ikan Nila Asam Manis & Sayur Sop',
-        'bahan_1'        => 'Nasi Putih',
-        'bahan_2'        => 'Ikan Nila (Goreng)',
-        'bahan_3'        => 'Saus Asam Manis',
-        'bahan_4'        => 'Sayur Sop (Wortel, Buncis)',
-        'bahan_5'        => 'Tempe Bacem',
-        'bahan_6'        => 'Buah Jeruk',
-        'created_at'     => '2024-05-11 09:00:00',
-        'updated_at'     => '2024-05-11 09:20:00', // Waktu update sedikit berbeda
+        'name' => 'Nasi, Ikan Kembung Bakar, Sayur Bayam Bening',
+        'created_at' => '2024-08-02 09:00:00',
+        'updated_at' => '2024-08-02 09:00:00'
       ],
       [
-        'nama_menu'      => 'Nasi Telur Balado Ringan & Perkedel',
-        'bahan_1'        => 'Nasi Putih',
-        'bahan_2'        => 'Telur Balado (Tidak Pedas)',
-        'bahan_3'        => 'Perkedel Kentang',
-        'bahan_4'        => 'Tumis Buncis Wortel',
-        'bahan_5'        => 'Buah Semangka',
-        'bahan_6'        => null,
-        'created_at'     => '2024-05-12 08:30:00',
-        'updated_at'     => '2024-05-12 08:30:00',
+        'name' => 'Nasi, Semur Daging Sapi Kentang, Tumis Tauge',
+        'created_at' => '2024-08-03 09:00:00',
+        'updated_at' => '2024-08-03 09:00:00'
       ],
       [
-        'nama_menu'      => 'Nasi Semur Daging Sapi & Tumis Bayam',
-        'bahan_1'        => 'Nasi Putih',
-        'bahan_2'        => 'Semur Daging Sapi',
-        'bahan_3'        => 'Kentang (dalam semur)',
-        'bahan_4'        => 'Tumis Bayam Jagung',
-        'bahan_5'        => 'Tahu Kukus',
-        'bahan_6'        => 'Buah Pepaya',
-        'created_at'     => '2024-05-13 07:45:00',
-        'updated_at'     => '2024-05-13 08:00:00', // Waktu update sedikit berbeda
+        'name' => 'Nasi, Lele Goreng, Tumis Kangkung Bawang Putih',
+        'created_at' => '2024-08-04 09:00:00',
+        'updated_at' => '2024-08-04 09:00:00'
       ],
       [
-        'nama_menu'      => 'Nasi Ayam Kecap Manis & Capcay',
-        'bahan_1'        => 'Nasi Putih',
-        'bahan_2'        => 'Ayam Kecap (Dada)',
-        'bahan_3'        => 'Capcay Kuah Ringan',
-        'bahan_4'        => 'Bakwan Sayur',
-        'bahan_5'        => 'Buah Apel',
-        'bahan_6'        => null,
-        'created_at'     => '2024-05-14 08:05:00',
-        'updated_at'     => '2024-05-14 08:05:00',
+        'name' => 'Nasi, Telur Dadar Sayur, Sup Wortel Kentang Buncis',
+        'created_at' => '2024-08-05 09:00:00',
+        'updated_at' => '2024-08-05 09:00:00'
+      ],
+      [
+        'name' => 'Nasi, Tahu Tempe Bacem, Sayur Lodeh Labu Siam',
+        'created_at' => '2024-08-06 09:00:00',
+        'updated_at' => '2024-08-06 09:00:00'
+      ],
+      [
+        'name' => 'Nasi, Ayam Kecap Manis, Capcay Sederhana (Wortel, Kol)',
+        'created_at' => '2024-08-07 09:00:00',
+        'updated_at' => '2024-08-07 09:00:00'
+      ],
+      [
+        'name' => 'Nasi, Ikan Tongkol Suwir Pedas Manis, Tumis Kol Telur',
+        'created_at' => '2024-08-08 09:00:00',
+        'updated_at' => '2024-08-08 09:00:00'
+      ],
+      [
+        'name' => 'Nasi, Perkedel Kentang Daging Cincang, Sup Bayam Jagung',
+        'created_at' => '2024-08-09 09:00:00',
+        'updated_at' => '2024-08-09 09:00:00'
+      ],
+      [
+        'name' => 'Nasi, Rolade Ayam Saus Tomat, Setup Wortel Buncis',
+        'created_at' => '2024-08-10 09:00:00',
+        'updated_at' => '2024-08-10 09:00:00'
       ],
     ];
 
-    // Menggunakan Query Builder untuk memasukkan data secara batch
-    // Ini lebih efisien daripada menggunakan insert() dalam loop
+    // Masukkan data secara batch
     $this->db->table('foods')->insertBatch($data);
   }
 }

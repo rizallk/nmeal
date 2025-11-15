@@ -20,17 +20,17 @@
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="nama" class="form-label">Nama Lengkap</label>
-          <input type="text" name="nama" class="form-control <?= $errors && isset($errors['nama']) ? 'is-invalid' : '' ?>" id="nama" placeholder="Nama Lengkap" value="<?= old('nama') ?>" required>
+          <label for="nama_lengkap" class="form-label">Nama Lengkap<span class="text-danger">*</span></label>
+          <input type="text" name="nama_lengkap" class="form-control <?= $errors && isset($errors['nama_lengkap']) ? 'is-invalid' : '' ?>" id="nama_lengkap" placeholder="Nama Lengkap" value="<?= old('nama_lengkap') ?>">
           <div class="invalid-feedback">
-            <?= $errors && isset($errors['nama']) ? $errors['nama'] : '' ?>
+            <?= $errors && isset($errors['nama_lengkap']) ? $errors['nama_lengkap'] : '' ?>
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="role" class="form-label">Role</label>
-          <select class="form-select <?= $errors && isset($errors['role']) ? 'is-invalid' : '' ?>" name="role" id="role" required>
+          <label for="role" class="form-label">Role<span class="text-danger">*</span></label>
+          <select class="form-select <?= $errors && isset($errors['role']) ? 'is-invalid' : '' ?>" name="role" id="role">
             <option value="">Pilih Role</option>
             <option value="admin"
               <?= old('role') == 'admin' ? 'selected' : '' ?>>
@@ -54,8 +54,8 @@
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input type="text" name="username" class="form-control <?= $errors && isset($errors['username']) ? 'is-invalid' : '' ?>" id="username" placeholder="Username" value="<?= old('username') ?>" required>
+          <label for="username" class="form-label">Username<span class="text-danger">*</span></label>
+          <input type="text" name="username" class="form-control <?= $errors && isset($errors['username']) ? 'is-invalid' : '' ?>" id="username" placeholder="Username" value="<?= old('username') ?>">
           <div class="invalid-feedback">
             <?= $errors && isset($errors['username']) ? $errors['username'] : '' ?>
           </div>
@@ -63,9 +63,9 @@
       </div>
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label">Password<span class="text-danger">*</span></label>
           <div class="input-group">
-            <input type="password" name="password" class="form-control <?= $errors && isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" placeholder="Password" value="<?= old('password') ?>" required>
+            <input type="password" name="password" class="form-control <?= $errors && isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" placeholder="Password" value="<?= old('password') ?>">
             <button class="btn btn-light border rounded-end"
               type="button"
               id="togglePassword">

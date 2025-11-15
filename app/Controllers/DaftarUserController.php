@@ -7,14 +7,18 @@ use App\Models\UserModel;
 class DaftarUserController extends BaseController
 {
   protected $userModel;
+  protected $userRole;
 
   public function __construct()
   {
     $this->userModel = new UserModel();
+    $this->userRole = session()->get('userRole');
   }
 
   public function index()
   {
+    if ($this->userRole != 'admin') return redirect()->back();
+
     $search = $this->request->getGet('search') ?? '';
     $roleFilter = $this->request->getGet('role') ?? '';
     $sortColumn = $this->request->getGet('sort-by') ?? 'created_at';
@@ -34,26 +38,28 @@ class DaftarUserController extends BaseController
     // Logika Search
     if (!empty($search)) {
       $query = $query->groupStart()
-        ->like('nama', $search)
+        ->like('nama_lengkap', $search)
         ->orLike('username', $search)
         ->groupEnd();
     }
 
     // Logika Sorting
-    $validSortColumns = ['nama', 'role', 'username', 'created_at'];
+    $validSortColumns = ['nama_lengkap', 'role', 'username', 'created_at'];
     if (in_array($sortColumn, $validSortColumns)) {
       $query = $query->orderBy($sortColumn, $sortOrder);
     }
 
     $currentFilters = [
       'search' => $search,
-      'role' => $roleFilter
+      'role' => $roleFilter,
+      'sort-by' => $sortColumn,
+      'sort-order' => $sortOrder
     ];
     $currentFilters = array_filter($currentFilters);
 
     $data = [
       'pageTitle' => 'Daftar User',
-      'daftarUser' => $query->paginate($perPage, 'default'),
+      'daftarUser' => $query->paginate($perPage, 'default', $currentPage),
       'pager' => $this->userModel->pager,
       'search' => $search,
       'roleFilter' => $roleFilter,
@@ -63,11 +69,15 @@ class DaftarUserController extends BaseController
       'currentFilters' => $currentFilters
     ];
 
+    $data['pager']->setPath('daftar-user', 'default');
+
     return view('pages/daftar_user/index', $data);
   }
 
   public function registerView()
   {
+    if ($this->userRole !== 'admin') return redirect()->back();
+
     $data = [
       'pageTitle' => 'Tambah User',
     ];
@@ -78,7 +88,7 @@ class DaftarUserController extends BaseController
   public function register()
   {
     $data = [
-      'nama' => $this->request->getPost('nama'),
+      'nama_lengkap' => $this->request->getPost('nama_lengkap'),
       'role' => $this->request->getPost('role'),
       'username' => $this->request->getPost('username'),
       'password' => $this->request->getPost('password'),
@@ -99,10 +109,12 @@ class DaftarUserController extends BaseController
       return redirect()->back()->withInput()->with('validation', $this->userModel->errors());
     }
 
-    $fotoFile->move(ROOTPATH . 'public/uploads/foto_user', $fotoName);
+    if ($fotoFile->isValid()) {
+      $fotoFile->move(ROOTPATH . 'public/uploads/foto_user', $fotoName);
+    }
 
     // Jika registrasi berhasil
-    return redirect()->to('/tambah-user')->with('success', 'Tambah user "' . $this->request->getPost('nama') . '" berhasil!');
+    return redirect()->to('/tambah-user')->with('success', 'Tambah user "' . $this->request->getPost('nama_lengkap') . '" berhasil!');
   }
 
   public function edit(int $id)
@@ -114,7 +126,7 @@ class DaftarUserController extends BaseController
     }
 
     $data = [
-      'pageTitle' => 'Edit User - ' . $user['nama'],
+      'pageTitle' => 'Edit User - ' . $user['nama_lengkap'],
       'user'  => $user,
       // 'validation' => \Config\Services::validation(),
     ];
@@ -136,7 +148,7 @@ class DaftarUserController extends BaseController
 
     $data = [
       'id' => $id,
-      'nama' => $this->request->getPost('nama'),
+      'nama_lengkap' => $this->request->getPost('nama_lengkap'),
       'role' => $this->request->getPost('role'),
     ];
 
@@ -172,7 +184,7 @@ class DaftarUserController extends BaseController
       }
     }
 
-    $namaUpdated = $this->request->getPost('nama');
+    $namaUpdated = $this->request->getPost('nama_lengkap');
 
     return redirect()->to(site_url('edit-user/' . $id))->with('success', 'User "' . esc($namaUpdated) . '" berhasil diupdate.');
   }
@@ -201,6 +213,6 @@ class DaftarUserController extends BaseController
     // Lakukan soft delete
     $this->userModel->delete($id);
 
-    return redirect()->to(site_url('daftar-user'))->with('success', 'User "' . esc($user['nama']) . '" berhasil dihapus.');
+    return redirect()->to(site_url('daftar-user'))->with('success', 'User "' . esc($user['nama_lengkap']) . '" berhasil dihapus.');
   }
 }

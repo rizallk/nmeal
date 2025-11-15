@@ -2,15 +2,18 @@
 
 namespace App\Controllers;
 
-use App\Models\ActivityModel;
+use App\Models\FoodPickupModel;
+use App\Models\StudentModel;
 
-class AktivitasTerkiniController extends BaseController
+class FoodPickupController extends BaseController
 {
-  protected $activityModel;
+  protected $foodPickupModel;
+  protected $studentModel;
 
   public function __construct()
   {
-    $this->activityModel = new ActivityModel();
+    $this->foodPickupModel = new FoodPickupModel();
+    $this->studentModel = new StudentModel();
   }
 
   public function index()
@@ -23,49 +26,44 @@ class AktivitasTerkiniController extends BaseController
 
     // Default value
     $data = [
-      'pageTitle' => 'Aktivitas Terkini',
+      'pageTitle' => 'Pengambilan Makanan',
       'data' => [], // Default array kosong
-      'pager' => null, // Default pager null
       'search' => $search,
       'kelasFilter' => $kelasFilter,
       'tanggalFilter' => $tanggalFilter,
       'sortColumn' => $sortColumn,
       'sortOrder' => $sortOrder,
-      'startNumber' => 0,
       'currentFilters' => []
     ];
 
     // Jalankan query ketika filter kelas telah dipilih
     if (!empty($kelasFilter)) {
-      $perPage = 10;
-      $currentPage = $this->request->getGet('page') ?? 1;
-      $startNumber = ($currentPage - 1) * $perPage;
-
-      $query = $this->activityModel
-        ->select('activities.*, students.nama, students.kelas')
-        ->join('students', 'students.id = activities.student_id', 'left');
+      $query = $this->foodPickupModel
+        ->select('food_pickups.*, students.nama_lengkap as nama_siswa, students.kelas, users.nama_lengkap as nama_operator')
+        ->join('students', 'students.id = food_pickups.student_id', 'right')
+        ->join('users', 'users.id = food_pickups.user_id', 'left');
 
       // Terapkan filter karena kita tahu $kelasFilter tidak kosong
       $query = $query->where('students.kelas', $kelasFilter);
 
       if (!empty($tanggalFilter)) {
-        $query = $query->where('DATE(activities.created_at)', $tanggalFilter);
+        $query = $query->where('DATE(food_pickups.created_at)', $tanggalFilter);
       }
 
       if (!empty($search)) {
         $query = $query->groupStart()
-          ->like('students.nama', $search)
-          ->orLike('activities.status', $search)
+          ->like('students.nama_lengkap', $search)
+          ->orLike('food_pickups.status', $search)
           ->groupEnd();
       }
 
-      // Logika Sorting (Perbaikan: gunakan array_key_exists)
-      $validSortColumns = ['nama' => 'students.nama'];
+      // Logika Sorting
+      $validSortColumns = ['nama' => 'students.nama_lengkap'];
       if (array_key_exists($sortColumn, $validSortColumns)) {
         $query = $query->orderBy($validSortColumns[$sortColumn], $sortOrder);
       } else {
         // Default sort
-        $query = $query->orderBy('students.nama', 'asc');
+        $query = $query->orderBy('students.nama_lengkap', 'asc');
       }
 
       $currentFilters = [
@@ -75,12 +73,12 @@ class AktivitasTerkiniController extends BaseController
       ];
 
       // Isi/Timpa $data dengan hasil query
-      $data['data'] = $query->paginate($perPage, 'default');
-      $data['pager'] = $this->activityModel->pager;
-      $data['startNumber'] = $startNumber;
+      $data['data'] = $query->get()->getResultArray();
       $data['currentFilters'] = array_filter($currentFilters);
     }
 
-    return view('pages/aktivitas_terkini.php', $data);
+    // dd($data['data']);
+
+    return view('pages/food_pickup.php', $data);
   }
 }

@@ -8,7 +8,7 @@ class StudentModel extends Model
 {
   protected $table = 'students';
   protected $allowedFields = [
-    'food_id',
+    'nis',
     'nama',
     'kelas',
   ];
@@ -18,13 +18,18 @@ class StudentModel extends Model
   protected $updatedField = 'updated_at';
 
   protected $validationRules = [
-    'food_id' => 'required|is_natural_no_zero',
-    'nama' => 'required|min_length[3]|max_length[255]',
+    'nis' => 'required|min_length[3]|max_length[50]',
+    'nama_lengkap' => 'required|min_length[3]|max_length[255]',
     'kelas' => 'required',
   ];
 
   protected $validationMessages = [
-    'nama' => [
+    'nis' => [
+      'required' => 'NIS wajib diisi.',
+      'min_length' => 'NIS minimal 3 karakter.',
+      'max_length' => 'NIS maksimal 50 karakter.'
+    ],
+    'nama_lengkap' => [
       'required' => 'Nama wajib diisi.',
       'min_length' => 'Nama minimal 3 karakter.',
       'max_length' => 'Nama maksimal 255 karakter.'

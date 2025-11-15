@@ -15,19 +15,17 @@ class CreateStudentsTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'food_id' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-                'null' => true,
+            'nis' => [
+                'type' => 'VARCHAR',
+                'constraint' => '50',
             ],
-            'nama' => [
+            'nama_lengkap' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
             ],
             'kelas' => [
                 'type' => 'VARCHAR',
-                'constraint' => '100',
+                'constraint' => '10',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -40,10 +38,6 @@ class CreateStudentsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        // Menambahkan Foreign Key, menghubungkan 'food_id' di tabel 'students' ke 'id' di tabel 'foods'
-        $this->forge->addForeignKey('food_id', 'foods', 'id', 'CASCADE', 'SET NULL');
-        // Parameter keempat (onUpdate) menjadi 'CASCADE'
-        // Parameter kelima (onDelete) menjadi 'SET NULL'
         $this->forge->createTable('students');
     }
 

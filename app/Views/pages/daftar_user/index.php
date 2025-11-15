@@ -33,12 +33,17 @@
           <div class="row mb-3">
             <label for="role" class="col-sm-auto col-form-label">Role</label>
             <div class="col-sm">
-              <select class="form-select" id="role" name="role" aria-label="Pilih Role" onchange="this.form.submit()">
-                <option value="" <?= empty($roleFilter) ? 'selected' : '' ?>>Pilih Role</option>
-                <option value="admin" <?= $roleFilter == 'admin' ? 'selected' : '' ?>>Admin</option>
-                <option value="guru" <?= $roleFilter == 'guru' ? 'selected' : '' ?>>Guru</option>
-                <option value="ortu" <?= $roleFilter == 'ortu' ? 'selected' : '' ?>>Orang Tua Siswa</option>
-              </select>
+              <div class="input-group input-group">
+                <select class="form-select" id="role" name="role" aria-label="Pilih Role" onchange="this.form.submit()">
+                  <option value="" <?= empty($roleFilter) ? 'selected' : '' ?>>Pilih Role</option>
+                  <option value="admin" <?= $roleFilter == 'admin' ? 'selected' : '' ?>>Admin</option>
+                  <option value="guru" <?= $roleFilter == 'guru' ? 'selected' : '' ?>>Guru</option>
+                  <option value="ortu" <?= $roleFilter == 'ortu' ? 'selected' : '' ?>>Orang Tua Siswa</option>
+                </select>
+                <?php if (!empty($roleFilter)): ?>
+                  <a href="<?= clear_spesific_filter_helper('daftar-user', $currentFilters, 'role') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
         </div>
@@ -48,7 +53,7 @@
             <input type="search" class="form-control" name="search" value="<?= esc($search) ?>" placeholder="Cari nama atau yang lain...">
             <button class="btn btn-success" type="submit">Cari</button>
             <?php if (!empty($search)): ?>
-              <a href="<?= site_url('daftar-user') ?>" class="btn btn-outline-secondary">Reset</a>
+              <a href="<?= clear_spesific_filter_helper('daftar-user', $currentFilters, 'search') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
             <?php endif; ?>
           </div>
         </div>
@@ -56,27 +61,27 @@
     </form>
   </div>
   <div class="table-responsive">
-    <table class="table table-striped table-bordered table mb-0">
+    <table class="table table-striped table-bordered table-hover mb-0">
       <thead class="table-light">
         <tr>
           <th style="width: 40px;">No</th>
           <th>
-            <a href="<?= buildSortLink('daftar-user', 'nama', $sortColumn, $sortOrder, $search) ?>" class="text-dark text-decoration-none">
-              Nama <?= getSortIcon('nama', $sortColumn, $sortOrder) ?>
+            <a href="<?= buildSortLink('daftar-user', 'nama_lengkap', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
+              Nama <?= getSortIcon('nama_lengkap', $sortColumn, $sortOrder) ?>
             </a>
           </th>
           <th>
-            <a href="<?= buildSortLink('daftar-user', 'role', $sortColumn, $sortOrder, $search) ?>" class="text-dark text-decoration-none">
+            <a href="<?= buildSortLink('daftar-user', 'role', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
               Role <?= getSortIcon('role', $sortColumn, $sortOrder) ?>
             </a>
           </th>
           <th>
-            <a href="<?= buildSortLink('daftar-user', 'username', $sortColumn, $sortOrder, $search) ?>" class="text-dark text-decoration-none">
+            <a href="<?= buildSortLink('daftar-user', 'username', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
               Username <?= getSortIcon('username', $sortColumn, $sortOrder) ?>
             </a>
           </th>
           <th>
-            <a href="<?= buildSortLink('daftar-user', 'created_at', $sortColumn, $sortOrder, $search) ?>" class="text-dark text-decoration-none">
+            <a href="<?= buildSortLink('daftar-user', 'created_at', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
               Tanggal Dibuat <?= getSortIcon('created_at', $sortColumn, $sortOrder) ?>
             </a>
           </th>
@@ -89,13 +94,13 @@
           <?php foreach ($daftarUser as $user): ?>
             <tr>
               <td><?= ++$no ?></td>
-              <td><?= esc($user['nama']) ?></td>
+              <td><?= esc($user['nama_lengkap']) ?></td>
               <td><?= ucfirst(esc($user['role'])) ?></td>
               <td><?= esc($user['username']) ?></td>
               <td><?= formatTanggalIndo(esc($user['created_at'])) ?></td>
               <td class="text-center">
                 <a href="<?= site_url('edit-user/' . $user['id']) ?>" class="text-warning me-2">Edit</a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $user['id'] ?>" data-user-name="<?= esc($user['nama']) ?>" title="Hapus User" class="text-danger">Hapus</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $user['id'] ?>" data-user-name="<?= esc($user['nama_lengkap']) ?>" title="Hapus User" class="text-danger">Hapus</a>
               </td>
             </tr>
           <?php endforeach; ?>

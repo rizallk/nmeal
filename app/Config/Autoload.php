@@ -88,5 +88,5 @@ class Autoload extends AutoloadConfig
      *
      * @var list<string>
      */
-    public $helpers = ['tanggal', 'build_sort_link', 'get_sort_icon'];
+    public $helpers = ['tanggal', 'build_sort_link', 'get_sort_icon', 'clear_spesific_filter'];
 }

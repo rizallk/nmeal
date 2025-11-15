@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateFoodsTable extends Migration
+class CreateIngredientsTable extends Migration
 {
     public function up()
     {
@@ -18,6 +18,7 @@ class CreateFoodsTable extends Migration
             'name' => [
                 'type' => 'VARCHAR',
                 'constraint' => '100',
+                'unique' => true
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -30,11 +31,11 @@ class CreateFoodsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('foods');
+        $this->forge->createTable('ingredients');
     }
 
     public function down()
     {
-        $this->forge->dropTable('foods');
+        $this->forge->dropTable('ingredients');
     }
 }

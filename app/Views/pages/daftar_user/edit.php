@@ -22,10 +22,10 @@
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="nama" class="form-label">Nama Lengkap</label>
-          <input type="text" name="nama" class="form-control <?= $errors && isset($errors['nama']) ? 'is-invalid' : '' ?>" id="nama" placeholder="Nama Lengkap" value="<?= old('nama', $user['nama']) ?>" required>
+          <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+          <input type="text" name="nama_lengkap" class="form-control <?= $errors && isset($errors['nama_lengkap']) ? 'is-invalid' : '' ?>" id="nama_lengkap" placeholder="Nama Lengkap" value="<?= old('nama_lengkap', $user['nama_lengkap']) ?>" required>
           <div class="invalid-feedback">
-            <?= $errors && isset($errors['nama']) ? $errors['nama'] : '' ?>
+            <?= $errors && isset($errors['nama_lengkap']) ? $errors['nama_lengkap'] : '' ?>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
         <div class="mb-3">
           <label class="form-label">Foto Saat Ini</label><br>
           <?php if (!empty($user['foto'])): ?>
-            <img class="img-fluid" style="height: auto; width: 200px;" src="<?= base_url('uploads/foto_user/' . esc($user['foto'])) ?>" alt="<?= esc($user['nama']) ?>">
+            <img class="img-fluid" style="height: auto; width: 200px;" src="<?= base_url('uploads/foto_user/' . esc($user['foto'])) ?>" alt="<?= esc($user['nama_lengkap']) ?>">
           <?php endif; ?>
         </div>
       </div>
