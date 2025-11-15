@@ -97,7 +97,7 @@
               </td>
             </th>
             <th>
-              <a href="<?= buildSortLink('daftar-user', 'nama', $sortColumn, $sortOrder, $search) ?>" class="text-dark text-decoration-none">
+              <a href="<?= buildSortLink('food-pickup', 'nama_lengkap', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
                 Nama <?= getSortIcon('nama', $sortColumn, $sortOrder) ?>
               </a>
             </th>

@@ -69,7 +69,9 @@ class FoodPickupController extends BaseController
       $currentFilters = [
         'search' => $search,
         'kelas' => $kelasFilter,
-        'tanggal' => $tanggalFilter
+        'tanggal' => $tanggalFilter,
+        'sort-by' => $sortColumn,
+        'sort-order' => $sortOrder
       ];
 
       // Isi/Timpa $data dengan hasil query
