@@ -9,7 +9,7 @@ class StudentModel extends Model
   protected $table = 'students';
   protected $allowedFields = [
     'nis',
-    'nama',
+    'nama_lengkap',
     'kelas',
   ];
   protected $useTimestamps = true;
