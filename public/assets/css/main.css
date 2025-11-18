@@ -24,6 +24,11 @@
   background-color: var(--secondary-color);
 }
 
+.alert-sm {
+  font-size: 14px;
+  padding: 4px 8px !important;
+}
+
 .btn-primary-custom {
   --bs-btn-color: #fff;
   --bs-btn-bg: var(--primary-color);

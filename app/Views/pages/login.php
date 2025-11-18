@@ -24,7 +24,7 @@
               </div>
             <?php endif; ?>
             <?php $errors = session()->getFlashdata('validation'); ?>
-            <form action="<?= url_to('login-auth') ?>" method="post">
+            <form action="<?= site_url('login/auth') ?>" method="post">
               <?= csrf_field() ?>
               <div class="mb-3">
                 <label for="username" class="form-label text-light">Username</label>

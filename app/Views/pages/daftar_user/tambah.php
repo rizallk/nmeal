@@ -15,7 +15,7 @@
     </div>
   <?php endif; ?>
   <?php $errors = session()->getFlashdata('validation'); ?>
-  <form id="form-register" action="<?= url_to('register') ?>" method="post" enctype="multipart/form-data">
+  <form id="form-register" action="<?= site_url('tambah-user/register') ?>" method="post" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="row">
       <div class="col-md-6">

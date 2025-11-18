@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
   <meta charset="utf-8" />
@@ -38,7 +38,7 @@
     crossorigin="anonymous"></script>
 
   <!-- <script>
-    // Script untuk mendaftarkan Service Worker
+    // Script untuk mendaftarkan Service Worker (PWA)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')

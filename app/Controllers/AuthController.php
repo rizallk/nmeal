@@ -45,6 +45,7 @@ class AuthController extends BaseController
             if (password_verify($password, $user['password'])) {
                 $ses_data = [
                     'nama' => $user['nama_lengkap'],
+                    'userId' => $user['id'],
                     'userRole' => $user['role'],
                     'username' => $user['username'],
                     'userFoto' => $user['foto'],
