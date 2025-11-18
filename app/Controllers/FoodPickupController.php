@@ -21,7 +21,7 @@ class FoodPickupController extends BaseController
     $search = $this->request->getGet('search') ?? '';
     $kelasFilter = $this->request->getGet('kelas') ?? '';
     $tanggalFilter = $this->request->getGet('tanggal') ?? date("Y-m-d");
-    $sortColumn = $this->request->getGet('sort-by') ?? 'nama';
+    $sortColumn = $this->request->getGet('sort-by') ?? 'nama_lengkap';
     $sortOrder = $this->request->getGet('sort-order') ?? 'asc';
 
     $isEditable = $tanggalFilter == date("Y-m-d") ? true : false;
@@ -54,7 +54,7 @@ class FoodPickupController extends BaseController
           students.nama_lengkap as nama_siswa, 
           students.kelas, 
           food_pickups.status, 
-          food_pickups.laporan, 
+          food_pickups.catatan, 
           food_pickups.created_at, 
           users.nama_lengkap as nama_operator
         ')
@@ -71,7 +71,7 @@ class FoodPickupController extends BaseController
       }
 
       // Logika Sorting
-      $validSortColumns = ['nama' => 'students.nama_lengkap'];
+      $validSortColumns = ['nama_lengkap' => 'students.nama_lengkap'];
       if (array_key_exists($sortColumn, $validSortColumns)) {
         $query = $query->orderBy($validSortColumns[$sortColumn], $sortOrder);
       } else {
@@ -101,6 +101,7 @@ class FoodPickupController extends BaseController
     $submitted_student_ids = $this->request->getPost('student_ids') ?? [];
     $tanggal = $this->request->getPost('tanggal');
     $kelas = $this->request->getPost('kelas');
+    $catatan_list = $this->request->getPost('catatan') ?? [];
 
     $isEditable = ($tanggal === date("Y-m-d"));
     if (!$isEditable) {
@@ -132,70 +133,58 @@ class FoodPickupController extends BaseController
         $existing_map[$pickup['student_id']] = $pickup['id'];
       }
 
-      $ids_to_insert = []; // Student ID yang akan di-INSERT
-      $ids_to_update = []; // Pickup ID (PK) yang akan di-UPDATE
-      $ids_to_delete = []; // Pickup ID (PK) yang akan di-DELETE
+      $insert_data = [];
+      $update_data = [];
+      $ids_to_delete = [];
+
+      $timestamp = $tanggal . ' ' . date('H:i:s');
 
       foreach ($all_students_in_class as $student_id) {
         $is_checked = in_array($student_id, $submitted_student_ids);
         $is_existing = array_key_exists($student_id, $existing_map);
 
+        $catatan_siswa = !empty($catatan_list[$student_id]) ? $catatan_list[$student_id] : null;
+
         if ($is_checked) {
-          // Skenario: Siswa Dicentang
           if ($is_existing) {
-            // Dicentang dan sudah ada -> UPDATE
-            $ids_to_update[] = $existing_map[$student_id];
+            $update_data[] = [
+              'id' => $existing_map[$student_id],
+              'status' => 1,
+              'user_id' => $operator_id,
+              'catatan' => $catatan_siswa,
+              'updated_at' => $timestamp
+            ];
           } else {
-            // Dicentang dan belum ada -> INSERT
-            $ids_to_insert[] = $student_id;
+            $insert_data[] = [
+              'student_id' => $student_id,
+              'user_id' => $operator_id,
+              'status' => 1,
+              'catatan' => $catatan_siswa,
+              'created_at' => $timestamp,
+              'updated_at' => $timestamp
+            ];
           }
         } else {
-          // Skenario: Siswa TIDAK Dicentang
           if ($is_existing) {
-            // Tidak dicentang dan sudah ada -> DELETE (Sesuai permintaan)
             $ids_to_delete[] = $existing_map[$student_id];
           }
-          // Tidak dicentang dan tidak ada -> Abaikan
         }
       }
 
-      $timestamp = $tanggal . ' ' . date('H:i:s');
-
-      $batch_insert_data = [];
-      foreach ($ids_to_insert as $student_id) {
-        $batch_insert_data[] = [
-          'student_id' => $student_id,
-          'user_id' => $operator_id,
-          'status' => 1, // 1 = Sudah
-          'laporan' => null,
-          'created_at' => $timestamp,
-          'updated_at' => $timestamp
-        ];
-      }
-      if (!empty($batch_insert_data)) {
-        $this->foodPickupModel->insertBatch($batch_insert_data);
+      if (!empty($insert_data)) {
+        $this->foodPickupModel->insertBatch($insert_data);
       }
 
-      if (!empty($ids_to_update)) {
-        $this->foodPickupModel
-          ->whereIn('id', $ids_to_update)
-          ->set([
-            'status' => 1,
-            'user_id' => $operator_id,
-            'updated_at' => $timestamp
-          ])
-          ->update();
+      if (!empty($update_data)) {
+        $this->foodPickupModel->updateBatch($update_data, 'id');
       }
 
       if (!empty($ids_to_delete)) {
-        $this->foodPickupModel
-          ->whereIn('id', $ids_to_delete)
-          ->delete();
+        $this->foodPickupModel->delete($ids_to_delete);
       }
 
       $this->foodPickupModel->db->transCommit();
-
-      return redirect()->back()->with('success', 'Data pengambilan makanan berhasil disimpan.');
+      return redirect()->back()->with('success', 'Data berhasil disimpan.');
     } catch (\Exception $e) {
       $this->foodPickupModel->db->transRollback();
       return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());

@@ -11,7 +11,7 @@ class FoodPickupModel extends Model
     'student_id',
     'user_id',
     'status',
-    'laporan'
+    'catatan'
   ];
   protected $useTimestamps = true;
   protected $dateFormat = 'datetime';
@@ -22,7 +22,7 @@ class FoodPickupModel extends Model
     'student_id' => 'required|is_natural_no_zero',
     'user_id' => 'required|is_natural_no_zero',
     'status' => 'required|in_list[0,1]',
-    'laporan' => 'permit_empty|max_length[255]',
+    'catatan' => 'permit_empty|max_length[255]',
   ];
 
   protected $validationMessages = [];

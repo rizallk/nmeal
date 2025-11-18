@@ -29,6 +29,11 @@
   padding: 4px 8px !important;
 }
 
+.disabled {
+  pointer-events: none;
+  user-select: none;
+}
+
 .btn-primary-custom {
   --bs-btn-color: #fff;
   --bs-btn-bg: var(--primary-color);
