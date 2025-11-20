@@ -244,7 +244,9 @@
       </div>
 
       <?php if ($tanggalFilter <= date("Y-m-d")): ?>
-        <button type="submit" class="btn btn-outline-primary">Cetak PDF</button>
+        <a href="<?= site_url('food-pickup/export-pdf?' . http_build_query(array_filter($currentFilters))) ?>" target="_blank" class="btn btn-outline-primary">
+          <i class="bi bi-printer me-2"></i>Cetak PDF
+        </a>
       <?php endif; ?>
 
       <?php if ($isEditable): ?>

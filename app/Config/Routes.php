@@ -14,9 +14,11 @@ $routes->get('/logout', 'AuthController::logout');
 
 // Dashboard
 $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'authcheck']);
+$routes->get('dashboard/recommendation', 'DashboardController::getRecommendation', ['filter' => 'authcheck']);
 
 // Pengambilan makanan
 $routes->get('/food-pickup', 'FoodPickupController::index', ['filter' => 'authcheck']);
+$routes->get('food-pickup/export-pdf', 'FoodPickupController::exportPdf', ['filter' => 'authcheck']);
 $routes->post('/food-pickup/save', 'FoodPickupController::save', ['filter' => 'authcheck']);
 
 // Daftar user

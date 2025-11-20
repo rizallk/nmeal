@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\FoodPickupModel;
 use App\Models\StudentModel;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class FoodPickupController extends BaseController
 {
@@ -16,6 +18,52 @@ class FoodPickupController extends BaseController
     $this->studentModel = new StudentModel();
   }
 
+  private function getPickupData($kelasFilter, $tanggalFilter, $search, $sortColumn, $sortOrder)
+  {
+    if (empty($kelasFilter) || $tanggalFilter > date("Y-m-d")) {
+      return [];
+    }
+
+    $query = $this->studentModel;
+
+    $onClause = 'food_pickups.student_id = students.id';
+    if (!empty($tanggalFilter)) {
+      $onClause .= " AND DATE(food_pickups.created_at) = " . $this->studentModel->db->escape($tanggalFilter);
+    }
+
+    $query = $query
+      ->select('
+                students.id as student_id,
+                students.nama_lengkap as nama_siswa, 
+                students.kelas, 
+                food_pickups.status, 
+                food_pickups.catatan, 
+                food_pickups.created_at, 
+                users.nama_lengkap as nama_operator
+            ')
+      ->join('food_pickups', $onClause, 'left')
+      ->join('users', 'users.id = food_pickups.user_id', 'left');
+
+    $query = $query->where('students.kelas', $kelasFilter);
+
+    if (!empty($search)) {
+      $query = $query->groupStart()
+        ->like('students.nama_lengkap', $search)
+        ->orLike('food_pickups.status', $search)
+        ->groupEnd();
+    }
+
+    // Logika Sorting
+    $validSortColumns = ['nama_lengkap' => 'students.nama_lengkap'];
+    if (array_key_exists($sortColumn, $validSortColumns)) {
+      $query = $query->orderBy($validSortColumns[$sortColumn], $sortOrder);
+    } else {
+      $query = $query->orderBy('students.nama_lengkap', 'asc');
+    }
+
+    return $query->get()->getResultArray();
+  }
+
   public function index()
   {
     $search = $this->request->getGet('search') ?? '';
@@ -26,74 +74,64 @@ class FoodPickupController extends BaseController
 
     $isEditable = $tanggalFilter == date("Y-m-d") ? true : false;
 
-    // Default value
+    $resultData = $this->getPickupData($kelasFilter, $tanggalFilter, $search, $sortColumn, $sortOrder);
+
+    $currentFilters = [
+      'search' => $search,
+      'kelas' => $kelasFilter,
+      'tanggal' => $tanggalFilter,
+      'sort-by' => $sortColumn,
+      'sort-order' => $sortOrder
+    ];
+
     $data = [
       'pageTitle' => 'Pengambilan Makanan',
-      'data' => [], // Default array kosong
+      'data' => $resultData,
       'search' => $search,
       'kelasFilter' => $kelasFilter,
       'tanggalFilter' => $tanggalFilter,
       'sortColumn' => $sortColumn,
       'sortOrder' => $sortOrder,
-      'currentFilters' => [],
+      'currentFilters' => array_filter($currentFilters),
       'isEditable' => $isEditable
     ];
 
-    // Jalankan query ketika filter kelas telah dipilih
-    if (!empty($kelasFilter) && $tanggalFilter <= date("Y-m-d")) {
-      $query = $this->studentModel;
+    return view('pages/food_pickup/index', $data);
+  }
 
-      $onClause = 'food_pickups.student_id = students.id';
-      if (!empty($tanggalFilter)) {
-        $onClause .= " AND DATE(food_pickups.created_at) = " . $this->studentModel->db->escape($tanggalFilter);
-      }
+  public function exportPdf()
+  {
+    $search = $this->request->getGet('search') ?? '';
+    $kelasFilter = $this->request->getGet('kelas') ?? '';
+    $tanggalFilter = $this->request->getGet('tanggal') ?? date("Y-m-d");
+    $sortColumn = $this->request->getGet('sort-by') ?? 'nama_lengkap';
+    $sortOrder = $this->request->getGet('sort-order') ?? 'asc';
 
-      $query = $query
-        ->select('
-          students.id as student_id,
-          students.nama_lengkap as nama_siswa, 
-          students.kelas, 
-          food_pickups.status, 
-          food_pickups.catatan, 
-          food_pickups.created_at, 
-          users.nama_lengkap as nama_operator
-        ')
-        ->join('food_pickups', $onClause, 'left')
-        ->join('users', 'users.id = food_pickups.user_id', 'left');
+    $data = $this->getPickupData($kelasFilter, $tanggalFilter, $search, $sortColumn, $sortOrder);
 
-      $query = $query->where('students.kelas', $kelasFilter);
-
-      if (!empty($search)) {
-        $query = $query->groupStart()
-          ->like('students.nama_lengkap', $search)
-          ->orLike('food_pickups.status', $search)
-          ->groupEnd();
-      }
-
-      // Logika Sorting
-      $validSortColumns = ['nama_lengkap' => 'students.nama_lengkap'];
-      if (array_key_exists($sortColumn, $validSortColumns)) {
-        $query = $query->orderBy($validSortColumns[$sortColumn], $sortOrder);
-      } else {
-        // Default sort
-        $query = $query->orderBy('students.nama_lengkap', 'asc');
-      }
-
-      $currentFilters = [
-        'search' => $search,
-        'kelas' => $kelasFilter,
-        'tanggal' => $tanggalFilter,
-        'sort-by' => $sortColumn,
-        'sort-order' => $sortOrder
-      ];
-
-      $data['data'] = $query->get()->getResultArray();
-      $data['currentFilters'] = array_filter($currentFilters);
+    if (empty($data)) {
+      return redirect()->back()->with('error', 'Tidak ada data untuk dicetak.');
     }
 
-    // dd($data['data']);
+    $viewData = [
+      'data' => $data,
+      'kelas' => $kelasFilter,
+      'tanggal' => $tanggalFilter
+    ];
 
-    return view('pages/food_pickup.php', $data);
+    $html = view('pages/food_pickup/export_pdf', $viewData);
+
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+    $dompdf = new Dompdf($options);
+
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $filename = 'Laporan Pengambilan Makanan_Kelas_' . $kelasFilter . '_' . $tanggalFilter . '.pdf';
+
+    $dompdf->stream($filename, ["Attachment" => false]); // Set true jika ingin langsung download
   }
 
   public function save()
