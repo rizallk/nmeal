@@ -11,7 +11,7 @@
   }
 
   .home-ortu .color {
-    color: #6ecc46ff;
+    color: #65c43cff;
   }
 </style>
 <?= $this->endSection() ?>
@@ -32,13 +32,23 @@
     <div class="col-md-8">
       <div class="card bg-color-1 p-3 border-0 mb-3">
         <div class="card px-4 py-3 border-0">
-          <div class="card bg-color-2 border-0 mb-3">
+          <div class="card bg-color-2 border-0 mb-3" id="btnRekomendasi" onclick="getRecommendation()" style="cursor: pointer">
             <div class="card-body text-center">
-              <h6 class="card-title mb-0 fw-bold">Ayo dukung si kecil makan sayur!</h6>
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="spinner-border spinner-border-sm d-none" role="status" id="btnLoading">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <h6 class="card-title mb-0 fw-bold ms-2" id="btnText">Lihat Rekomendasi</h6>
+              </div>
+            </div>
+          </div>
+          <div class="card bg-color-2 border-0 mb-3" id="tipsHeader">
+            <div class="card-body text-center">
+              <h6 class="card-title mb-0 fw-bold">Ayo dukung si kecil dengan tips makanan berikut!</h6>
             </div>
           </div>
           <p class="fw-bold color">Tips Hari Ini</p>
-          <p>Tambahkan Sayur ke dalam menu favorit anak, misalnya mie goreng dengan wortel dan brokoli</p>
+          <p id="tipsContent"></p>
         </div>
       </div>
     </div>
@@ -46,11 +56,69 @@
       <div class="card card-right mb-3">
         <div class="card-body text-center">
           <h5 class="card-title fw-bold text-danger">Perlu diperhatikan!</h5>
-          <p class="card-text">Hari ini si kecil sama sekali belum mengonsumsi sayur</p>
+          <p class="card-text">Hari ini si kecil belum mengonsumsi makanannya</p>
           <div class="btn btn-danger">Ingatkan si kecil ya!</div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="<?= base_url('assets/js/getFormattedDate.js'); ?>"></script>
+
+<script>
+  const btn = document.getElementById('btnRekomendasi');
+  const tipsContentSaved = localStorage.getItem('tips') ? JSON.parse(localStorage.getItem('tips')) : null;
+  const tipsHeader = document.getElementById('tipsHeader');
+  const tipsContent = document.getElementById('tipsContent');
+
+  if (getFormattedDate(new Date()) === tipsContentSaved?.date) {
+    tipsContent.textContent = tipsContentSaved?.content
+    btn.classList.add('d-none')
+  } else {
+    tipsHeader.classList.add('d-none')
+    localStorage.setItem('tips', JSON.stringify({
+      content: 'test',
+      date: getFormattedDate(new Date())
+    }))
+  }
+
+  async function getRecommendation() {
+    const btnText = document.getElementById('btnText');
+    const btnLoading = document.getElementById('btnLoading');
+
+    btn.classList.add('disabled');
+    btnText.textContent = "Sedang Menganalisis...";
+    btnLoading.classList.remove('d-none');
+
+    try {
+      const response = await fetch('<?= site_url('dashboard/recommendation') ?>', {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        tipsContent.innerHTML = data.message;
+        localStorage.setItem('tips', JSON.stringify({
+          content: data.message,
+          date: getFormattedDate(new Date())
+        }))
+      } else {
+        tipsContent.innerHTML = `<div class="alert alert-warning">${data.message || 'Gagal memuat rekomendasi.'}</div>`;
+      }
+    } catch (error) {
+      console.error(error);
+      localStorage.removeItem('tips')
+      alert('Terjadi kesalahan jaringan.');
+    } finally {
+      btn.classList.remove('disabled');
+      btnText.textContent = "Lihat Rekomendasi";
+      btnLoading.classList.add('d-none');
+    }
+  }
+</script>
+
 <?= $this->endSection() ?>

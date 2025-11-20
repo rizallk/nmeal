@@ -22,6 +22,17 @@
     width: 200px;
   }
 
+  .food-pickup .table .catatan-value {
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .food-pickup .table .catatan-value .bi {
+    position: absolute;
+    right: 10px;
+  }
+
   .food-pickup .table .form-check-input {
     width: 1.2em;
     height: 1.2em;
@@ -161,14 +172,14 @@
               </th>
               <th class="nama">
                 <a href="<?= buildSortLink('food-pickup', 'nama_lengkap', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
-                  Nama <?= getSortIcon('nama', $sortColumn, $sortOrder) ?>
+                  Nama <?= getSortIcon('nama_lengkap', $sortColumn, $sortOrder) ?>
                 </a>
               </th>
               <th class="status">
                 Status
               </th>
               <th>
-                Laporan
+                Catatan
               </th>
               <th class="operator">
                 Operator
@@ -179,7 +190,7 @@
             <?php if (!empty($data)): ?>
               <?php $no = 0; ?>
               <?php foreach ($data as $d): ?>
-                <tr>
+                <tr class="<?= !$isEditable ? 'disabled' : '' ?>">
                   <td><?= ++$no ?></td>
                   <td class="position-relative">
                     <div class="form-check">
@@ -192,11 +203,34 @@
                           <?= !$isEditable ? 'disabled' : '' ?>>
                       </div>
                     </div>
+
+                    <input
+                      type="hidden"
+                      name="catatan[<?= $d['student_id'] ?>]"
+                      id="input_catatan_<?= $d['student_id'] ?>"
+                      value="<?= esc($d['catatan']) ?>">
                   </td>
-                  <td data-bs-toggle="modal" data-bs-target="#laporanModal" data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-report="<?= $d['laporan'] ?>" style="cursor: pointer"><?= esc($d['nama_siswa']) ?></td>
-                  <td><span class=" badge rounded-pill <?= esc($d['status']) == 1 ? "text-bg-success" : "text-bg-danger" ?>"><?= esc($d['status']) == 1 ? "Sudah" : "Belum" ?></span>
+                  <td
+                    data-bs-toggle="modal"
+                    data-bs-target="#catatanModal"
+                    data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-note="<?= $d['catatan'] ?>" style="cursor: pointer">
+                    <?= esc($d['nama_siswa']) ?>
                   </td>
-                  <td><?= esc($d['laporan']) ?></td>
+                  <td><span class="badge rounded-pill <?= esc($d['status']) == 1 ? "text-bg-success" : "text-bg-danger" ?>"><?= esc($d['status']) == 1 ? "Sudah" : "Belum" ?></span>
+                  </td>
+                  <td
+                    class="catatan-value"
+                    data-bs-toggle="modal" data-bs-target="#catatanModal"
+                    data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-note="<?= $d['catatan'] ?>">
+                    <div>
+                      <span id="display_catatan_<?= $d['student_id'] ?>">
+                        <?= esc($d['catatan']) ?>
+                      </span>
+                      <?php if ($isEditable): ?>
+                        <i class="bi bi-pencil-square text-secondary" style="font-size: 0.8rem;"></i>
+                      <?php endif; ?>
+                    </div>
+                  </td>
                   <td><?= esc($d['nama_operator']) ?></td>
                 </tr>
               <?php endforeach; ?>
@@ -209,9 +243,13 @@
         </table>
       </div>
 
-      <?php if ($isEditable): ?>
-        <button type="submit" class="btn btn-outline-primary">Cetak PDF</button>
+      <?php if ($tanggalFilter <= date("Y-m-d")): ?>
+        <a href="<?= site_url('food-pickup/export-pdf?' . http_build_query(array_filter($currentFilters))) ?>" target="_blank" class="btn btn-outline-primary">
+          <i class="bi bi-printer me-2"></i>Cetak PDF
+        </a>
+      <?php endif; ?>
 
+      <?php if ($isEditable): ?>
         <div class="buttons bg-white p-2 pb-3 shadow border rounded">
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-success"></i>Simpan</button>
@@ -221,28 +259,29 @@
     </form>
   <?php endif; ?>
 
-  <!-- Modal Input Laporan -->
-  <div class="modal fade" id="laporanModal" tabindex="-1" aria-labelledby="laporanModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Isi laporan untuk <b id="studentName"></b></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="<?= site_url('food-pickup/save') ?>" method="post">
-          <?= csrf_field() ?>
+
+  <!-- Modal Input Catatan -->
+  <?php if ($isEditable): ?>
+    <div class="modal fade" id="catatanModal" tabindex="-1" aria-labelledby="catatanModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Catatan - <b id="modalStudentName"></b></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
           <div class="modal-body">
-            <label for="studentReport" class="form-label">Laporan</label>
-            <textarea class="form-control" id="studentReport" name="laporan" rows="3" placeholder="Isi laporan di sini"></textarea>
+            <input type="hidden" id="modalStudentId">
+            <textarea class="form-control" id="modalStudentNote" rows="3" placeholder="Contoh: Alergi, Tidak makan sayur, dll..."></textarea>
+            <div class="form-text text-muted">Klik "Set Catatan" untuk menyimpan sementara ke tabel. Klik tombol hijau "Simpan" di pojok kanan bawah untuk menyimpan ke database.</div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-primary" id="btnSetCatatan">Set Catatan</button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
+  <?php endif; ?>
 
   <script>
     const checkedAll = document.querySelector('#checkedAll')
@@ -264,12 +303,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      const laporanModal = document.getElementById('laporanModal');
+      const catatanModal = document.getElementById('catatanModal');
 
-      if (laporanModal) {
-        laporanModal.addEventListener('show.bs.modal', function(event) {
-          document.getElementById('studentName').textContent = event.relatedTarget.getAttribute('data-student-name');
-          document.getElementById('studentReport').textContent = event.relatedTarget.getAttribute('data-student-report');
+      if (catatanModal) {
+        catatanModal.addEventListener('show.bs.modal', function(event) {
+          const button = event.relatedTarget;
+
+          const id = button.getAttribute('data-student-id');
+          const name = button.getAttribute('data-student-name');
+
+          const currentVal = document.getElementById('input_catatan_' + id).value;
+
+          document.getElementById('modalStudentId').value = id;
+          document.getElementById('modalStudentName').textContent = name;
+          document.getElementById('modalStudentNote').value = currentVal;
+        });
+
+        document.getElementById('btnSetCatatan').addEventListener('click', function() {
+          const id = document.getElementById('modalStudentId').value;
+          const val = document.getElementById('modalStudentNote').value;
+
+          document.getElementById('input_catatan_' + id).value = val;
+
+          const displaySpan = document.getElementById('display_catatan_' + id);
+          if (val.trim() !== "") {
+            displaySpan.innerHTML = val;
+          }
+
+          const modalInstance = bootstrap.Modal.getInstance(catatanModal);
+          modalInstance.hide();
         });
       }
     });

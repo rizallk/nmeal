@@ -31,7 +31,7 @@ class CreateFoodPickupsTable extends Migration
                 'null' => true,
                 'default' => false,
             ],
-            'laporan' => [
+            'catatan' => [
                 'type' => 'VARCHAR',
                 'constraint' => '255',
                 'null' => true,
