@@ -26,3 +26,11 @@ $routes->post('/tambah-user/register', 'DaftarUserController::register', ['filte
 $routes->get('/edit-user/(:num)', 'DaftarUserController::edit/$1', ['filter' => 'authcheck']);
 $routes->post('/update-user/(:num)', 'DaftarUserController::update/$1', ['filter' => 'authcheck']);
 $routes->post('/delete-user/(:num)', 'DaftarUserController::delete/$1', ['filter' => 'authcheck']);
+
+// Daftar siswa
+$routes->get('/daftar-siswa', 'DaftarSiswaController::index', ['filter' => 'authcheck']);
+$routes->get('/tambah-siswa', 'DaftarSiswaController::registerView', ['filter' => 'authcheck']);
+$routes->post('/tambah-siswa/register', 'DaftarSiswaController::register', ['filter' => 'authcheck']);
+$routes->get('/edit-siswa/(:num)', 'DaftarSiswaController::edit/$1', ['filter' => 'authcheck']);
+$routes->post('/update-siswa/(:num)', 'DaftarSiswaController::update/$1', ['filter' => 'authcheck']);
+$routes->post('/delete-siswa/(:num)', 'DaftarSiswaController::delete/$1', ['filter' => 'authcheck']);
