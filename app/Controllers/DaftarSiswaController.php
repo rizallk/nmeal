@@ -10,16 +10,12 @@ use App\Models\UserModel;
 class DaftarSiswaController extends BaseController
 {
   protected $studentModel;
-  protected $foodModel;
-  protected $studentFoodModel;
   protected $userModel;
   protected $userRole;
 
   public function __construct()
   {
     $this->studentModel = new StudentModel();
-    $this->foodModel = new FoodModel();
-    $this->studentFoodModel = new StudentFoodModel();
     $this->userModel = new UserModel();
     $this->userRole = session()->get('userRole');
   }
@@ -38,9 +34,7 @@ class DaftarSiswaController extends BaseController
     // Dapatkan halaman saat ini dari URL, defaultnya adalah 1
     $currentPage = $this->request->getGet('page') ?? 1;
     $startNumber = ($currentPage - 1) * $perPage; // Logika numbering
-    $query = $this->studentModel->select('students.id, students.nis, students.nama_lengkap, students.kelas, foods.name as menu_makanan')
-      ->join('student_foods', 'student_foods.student_id = students.id', 'left')
-      ->join('foods', 'foods.id = student_foods.food_id', 'left');
+    $query = $this->studentModel;
 
     if (!empty($kelasFilter)) {
       $query = $query->where('kelas', $kelasFilter);
@@ -92,7 +86,6 @@ class DaftarSiswaController extends BaseController
 
     $data = [
       'pageTitle' => 'Tambah Siswa',
-      'daftarMenuMakanan' => $this->foodModel->select('id, name')->findAll()
     ];
 
     return view('pages/daftar_siswa/tambah', $data);
@@ -112,16 +105,6 @@ class DaftarSiswaController extends BaseController
     if (!$this->studentModel->save($dataStudent)) {
       $db->transRollback();
       return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
-    }
-
-    $dataStudentFood = [
-      'student_id' => $this->studentModel->insertID(),
-      'food_id' => $this->request->getPost('menu_makanan')
-    ];
-
-    if (!$this->studentFoodModel->save($dataStudentFood)) {
-      $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentFoodModel->errors());
     }
 
     if ($this->request->getPost('create_parent_account')) {
@@ -162,8 +145,6 @@ class DaftarSiswaController extends BaseController
     $data = [
       'pageTitle' => 'Edit Siswa - ' . $siswa['nama_lengkap'],
       'siswa'  => $siswa,
-      'menuMakananSelected' => $this->studentFoodModel->where('student_id', $id)->first(),
-      'daftarMenuMakanan' => $this->foodModel->select('id, name')->findAll()
     ];
 
     return view('pages/daftar_siswa/edit', $data);
@@ -191,28 +172,6 @@ class DaftarSiswaController extends BaseController
     if (!$this->studentModel->save($dataStudent)) {
       $db->transRollback();
       return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
-    }
-
-    // Data Student Food
-    $newFoodId = $this->request->getPost('menu_makanan');
-    $dataStudentFood = [
-      'student_id' => $id,
-      'food_id'    => $newFoodId
-    ];
-
-    if (!$this->studentFoodModel->validate($dataStudentFood)) {
-      $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentFoodModel->errors());
-    }
-
-    $existingData = $this->studentFoodModel->where('student_id', $id)->first();
-    if ($existingData) {
-      $this->studentFoodModel
-        ->where('student_id', $id)
-        ->set(['food_id' => $newFoodId])
-        ->update();
-    } else {
-      $this->studentFoodModel->insert($dataStudentFood);
     }
 
     // Data User

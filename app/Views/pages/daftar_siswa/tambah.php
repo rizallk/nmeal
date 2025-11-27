@@ -80,41 +80,26 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="mb-3">
-          <label for="menu_makanan" class="form-label">Menu Makanan<span class="text-danger">*</span></label>
-          <select class="form-select <?= $errors && isset($errors['food_id']) ? 'is-invalid' : '' ?>" name="menu_makanan" id="menu_makanan" required>
-            <option value="">Pilih Menu Makanan</option>
-            <?php foreach ($daftarMenuMakanan as $menuMakanan): ?>
-              <option value="<?= $menuMakanan['id'] ?>"
-                <?= old('menu_makanan') == $menuMakanan['id'] ? 'selected' : '' ?>>
-                <?= $menuMakanan['name'] ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
+        <div class="form-check mb-3">
+          <input class="form-check-input <?= $errors && isset($errors['username']) ? 'is-invalid' : '' ?>" type="checkbox" value="true" id="create_parent_account" name="create_parent_account" checked>
+          <label class="form-check-label" for="create_parent_account">
+            Buatkan akun orang tua untuk siswa ini
+          </label>
+          <br>
           <small class="form-text text-muted">
-            Menu Makanan yang akan dikonsumsi siswa.
+            Username adalah NIS siswa.
+            <br>
+            Default password : NIS siswa + @ + Kelas.
+            <br>
+            Contoh password : 1234581@3
           </small>
           <div class="invalid-feedback">
-            <?= $errors && isset($errors['food_id']) ? $errors['food_id'] : '' ?>
+            <?= $errors && isset($errors['username']) ? $errors['username'] : '' ?>
           </div>
         </div>
       </div>
     </div>
-    <div class="form-check mb-3">
-      <input class="form-check-input <?= $errors && isset($errors['username']) ? 'is-invalid' : '' ?>" type="checkbox" value="true" id="create_parent_account" name="create_parent_account" checked>
-      <label class="form-check-label" for="create_parent_account">
-        Buatkan akun orang tua untuk siswa ini
-      </label>
-      <br>
-      <small class="form-text text-muted">
-        Default password : NIS siswa + @ + Kelas.
-        <br>
-        Contoh : 1234581@3
-      </small>
-      <div class="invalid-feedback">
-        <?= $errors && isset($errors['username']) ? $errors['username'] : '' ?>
-      </div>
-    </div>
+
     <div class="d-flex justify-content-end align-items-end h-100 mt-1">
       <button type="submit" class="btn btn-success">Submit</button>
     </div>

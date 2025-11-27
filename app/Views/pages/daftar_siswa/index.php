@@ -85,7 +85,6 @@
               </a>
             </th>
             <th>Kelas</th>
-            <th>Menu Makanan</th>
             <th class="text-center action">Aksi</th>
           </tr>
         </thead>
@@ -98,7 +97,6 @@
                 <td><?= esc($siswa['nis']) ?></td>
                 <td><?= esc($siswa['nama_lengkap']) ?></td>
                 <td><?= esc($siswa['kelas']) ?></td>
-                <td><?= esc($siswa['menu_makanan']) ?></td>
                 <td class="text-center">
                   <a href="<?= site_url('edit-siswa/' . $siswa['id']) ?>" class="text-warning me-2">Edit</a>
                   <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-siswa-id="<?= $siswa['id'] ?>" data-siswa-name="<?= esc($siswa['nama_lengkap']) ?>" title="Hapus Siswa" class="text-danger">Hapus</a>

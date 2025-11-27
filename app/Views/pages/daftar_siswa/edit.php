@@ -7,7 +7,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="tambah-siswa">
+<div class="edit-siswa">
   <?php if (session()->getFlashdata('success')): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       <?= session()->getFlashdata('success') ?> <a href="/daftar-siswa">Lihat</a>
