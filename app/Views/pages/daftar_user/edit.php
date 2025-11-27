@@ -14,6 +14,12 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <?php endif; ?>
+  <?php if (session()->getFlashdata('error')): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <?= session()->getFlashdata('error') ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <?php endif; ?>
   <?php $errors = session()->getFlashdata('validation'); ?>
   <form action="<?= site_url('update-user/' . $user['id']) ?>" method="post" enctype="multipart/form-data">
     <?= csrf_field() ?>
@@ -22,7 +28,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+          <label for="nama_lengkap" class="form-label">Nama Lengkap <?= old('role', $user['role']) == 'ortu' ? 'Siswa' : '' ?></label>
           <input type="text" name="nama_lengkap" class="form-control <?= $errors && isset($errors['nama_lengkap']) ? 'is-invalid' : '' ?>" id="nama_lengkap" placeholder="Nama Lengkap" value="<?= old('nama_lengkap', $user['nama_lengkap']) ?>" required>
           <div class="invalid-feedback">
             <?= $errors && isset($errors['nama_lengkap']) ? $errors['nama_lengkap'] : '' ?>

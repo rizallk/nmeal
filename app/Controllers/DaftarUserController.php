@@ -24,7 +24,7 @@ class DaftarUserController extends BaseController
     $sortColumn = $this->request->getGet('sort-by') ?? 'created_at';
     $sortOrder = $this->request->getGet('sort-order') ?? 'desc';
 
-    $perPage = 10; // default jumlah data yang muncul per-page
+    $perPage = 20; // default jumlah data yang muncul per-page
 
     // Dapatkan halaman saat ini dari URL, defaultnya adalah 1
     $currentPage = $this->request->getGet('page') ?? 1;
@@ -87,6 +87,8 @@ class DaftarUserController extends BaseController
 
   public function register()
   {
+    if ($this->userRole !== 'admin') return redirect()->back();
+
     $data = [
       'nama_lengkap' => $this->request->getPost('nama_lengkap'),
       'role' => $this->request->getPost('role'),
@@ -125,8 +127,10 @@ class DaftarUserController extends BaseController
       return redirect()->back()->with('error', 'User tidak ditemukan.');
     }
 
+    $isOrtu = $user['role'] == 'ortu' ? 'OrTu ' : '';
+
     $data = [
-      'pageTitle' => 'Edit User - ' . $user['nama_lengkap'],
+      'pageTitle' => 'Edit User - ' . $isOrtu . $user['nama_lengkap'],
       'user'  => $user,
       // 'validation' => \Config\Services::validation(),
     ];

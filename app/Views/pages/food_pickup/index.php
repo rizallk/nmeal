@@ -1,66 +1,21 @@
 <?= $this->extend('layouts/dashboard') ?>
 
 <?= $this->section('styles') ?>
-<style>
-  .food-pickup .table .status-checkbox {
-    position: relative;
-    width: 40px;
-  }
-
-  .food-pickup .table .nama {
-    position: relative;
-    width: 300px;
-  }
-
-  .food-pickup .table .status {
-    position: relative;
-    width: 80px;
-  }
-
-  .food-pickup .table .operator {
-    position: relative;
-    width: 200px;
-  }
-
-  .food-pickup .table .catatan-value {
-    cursor: pointer;
-    white-space: nowrap;
-    position: relative;
-  }
-
-  .food-pickup .table .catatan-value .bi {
-    position: absolute;
-    right: 10px;
-  }
-
-  .food-pickup .table .form-check-input {
-    width: 1.2em;
-    height: 1.2em;
-  }
-
-  .food-pickup .table tr td {
-    white-space: nowrap;
-  }
-
-  .food-pickup .info-is-editable {
-    display: flex;
-    justify-content: left;
-  }
-
-  .food-pickup .buttons {
-    position: fixed;
-    bottom: -8px;
-    right: 20px;
-    z-index: 1009;
-  }
-
-  @media (min-width: 768px) {
-    .food-pickup .info-is-editable {
-      justify-content: end;
-    }
-  }
-</style>
+<link rel="stylesheet" href="assets/css/pages/food_pickup.css">
 <?= $this->endSection() ?>
+
+<?php
+// Hari dan tanggal sekarang
+$date = new IntlDateFormatter(
+  'id_ID',
+  IntlDateFormatter::FULL,
+  IntlDateFormatter::NONE
+);
+
+$now = $date->format(time());
+$dayFilter = date('l', strtotime($tanggalFilter)); // mengambil nama hari dari tanggal filter
+$isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === 'Wednesday' || $dayFilter === 'Thursday' || $dayFilter === 'Friday'; // apakah termasuk hari masuk sekolah atau tidak
+?>
 
 <?= $this->section('content') ?>
 <div class="food-pickup">
@@ -125,26 +80,28 @@
       </div>
     </form>
     <hr class="mt-0">
-    <div class="row">
-      <div class="col-md">
-        <?php if (!empty($kelasFilter) && !empty($data)): ?>
-          <div class="alert alert-sm alert-<?= $tanggalFilter === date('Y-m-d') ? 'info' : 'secondary' ?>" role="alert">
-            <?php if ($tanggalFilter === date("Y-m-d")): ?>
-              <b>INFO :</b> Pengambilan makanan untuk hari ini (<b><?= formatTanggalIndo(date("d-m-Y")) ?></b>) di <b>Kelas <?= $kelasFilter ?></b>
-            <?php else: ?>
-              Riwayat Pengambilan makanan pada tanggal <b><?= formatTanggalIndo($tanggalFilter) ?></b> di <b>Kelas <?= $kelasFilter ?></b>
-            <?php endif; ?>
+    <?php if ($isDay): ?>
+      <div class="row">
+        <div class="col-md">
+          <?php if (!empty($kelasFilter) && !empty($data)): ?>
+            <div class="alert alert-sm alert-<?= $tanggalFilter === date('Y-m-d') ? 'info' : 'secondary' ?>" role="alert">
+              <?php if ($tanggalFilter === date("Y-m-d")): ?>
+                <b>INFO :</b> Pengambilan makanan untuk hari ini (<b><?= $now ?></b>) di <b>Kelas <?= $kelasFilter ?></b>
+              <?php else: ?>
+                Riwayat Pengambilan makanan pada tanggal <b><?= formatTanggalIndo($tanggalFilter) ?></b> di <b>Kelas <?= $kelasFilter ?></b>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
+        </div>
+        <?php if (!$isEditable && !empty($data)): ?>
+          <div class="col-md">
+            <div class="info-is-editable">
+              <div class="alert alert-sm alert-warning"><i class="bi bi-exclamation-triangle-fill me-2"></i>Data ini tidak bisa diubah lagi</div>
+            </div>
           </div>
         <?php endif; ?>
       </div>
-      <?php if (!$isEditable && !empty($data)): ?>
-        <div class="col-md">
-          <div class="info-is-editable">
-            <div class="alert alert-sm alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Data ini tidak bisa diubah lagi</div>
-          </div>
-        </div>
-      <?php endif; ?>
-    </div>
+    <?php endif; ?>
   </div>
   <?php if (empty($kelasFilter)): ?>
     <div class="alert alert-info text-center" role="alert">
@@ -178,7 +135,8 @@
               <th class="status">
                 Status
               </th>
-              <th>
+              <th class="menu-makanan">Menu Makanan</th>
+              <th class="catatan">
                 Catatan
               </th>
               <th class="operator">
@@ -187,10 +145,16 @@
             </tr>
           </thead>
           <tbody>
-            <?php if (!empty($data)): ?>
+            <?php if (empty($data) || !$isDay): ?>
+              <tr>
+                <td colspan="7" class="text-center">Tidak ada data yang ditemukan.</td>
+              </tr>
+            <?php else: ?>
               <?php $no = 0; ?>
               <?php foreach ($data as $d): ?>
-                <tr class="<?= !$isEditable ? 'disabled' : '' ?>">
+                <tr
+                  data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-note="<?= $d['catatan'] ?>"
+                  data-student-food="<?= $d['menu_makanan'] ?>">
                   <td><?= ++$no ?></td>
                   <td class="position-relative">
                     <div class="form-check">
@@ -199,11 +163,11 @@
                           class="form-check-input status-checkbox" type="checkbox"
                           name="student_ids[]"
                           value="<?= $d['student_id'] ?>"
+                          onclick="isFoodExist(event, '<?= $d['menu_makanan'] ?>')"
                           <?= !empty($d['status']) ? 'checked' : '' ?>
                           <?= !$isEditable ? 'disabled' : '' ?>>
                       </div>
                     </div>
-
                     <input
                       type="hidden"
                       name="catatan[<?= $d['student_id'] ?>]"
@@ -211,39 +175,48 @@
                       value="<?= esc($d['catatan']) ?>">
                   </td>
                   <td
-                    data-bs-toggle="modal"
-                    data-bs-target="#catatanModal"
-                    data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-note="<?= $d['catatan'] ?>" style="cursor: pointer">
+                    class="nama"
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-toggle="modal"' : '' ?>
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-target="#detailModal"' : '' ?>
+                    onclick="isFoodExist(event, '<?= $d['menu_makanan'] ?>')">
                     <?= esc($d['nama_siswa']) ?>
                   </td>
-                  <td><span class="badge rounded-pill <?= esc($d['status']) == 1 ? "text-bg-success" : "text-bg-danger" ?>"><?= esc($d['status']) == 1 ? "Sudah" : "Belum" ?></span>
+                  <td>
+                    <span class="badge rounded-pill <?= esc($d['status']) == 1 ? "text-bg-success" : "text-bg-danger" ?>"><?= esc($d['status']) == 1 ? "Sudah" : "Belum" ?></span>
                   </td>
                   <td
-                    class="catatan-value"
-                    data-bs-toggle="modal" data-bs-target="#catatanModal"
-                    data-student-id="<?= $d['student_id'] ?>" data-student-name="<?= $d['nama_siswa'] ?>" data-student-note="<?= $d['catatan'] ?>">
+                    class="menu-makanan"
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-toggle="modal"' : '' ?>
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-target="#detailModal"' : '' ?>
+                    onclick="isFoodExist(event, '<?= $d['menu_makanan'] ?>')">
+                    <span><?= esc($d['menu_makanan']) ?></span>
+                    <?php if (!empty($d['menu_makanan'])): ?>
+                      <i class="bi bi-search text-secondary"></i>
+                    <?php endif; ?>
+                  </td>
+                  <td
+                    class="catatan"
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-toggle="modal"' : '' ?>
+                    <?= !empty($d['menu_makanan']) ? 'data-bs-target="#detailModal"' : '' ?>
+                    onclick="isFoodExist(event, '<?= $d['menu_makanan'] ?>')">
                     <div>
                       <span id="display_catatan_<?= $d['student_id'] ?>">
                         <?= esc($d['catatan']) ?>
                       </span>
-                      <?php if ($isEditable): ?>
-                        <i class="bi bi-pencil-square text-secondary" style="font-size: 0.8rem;"></i>
+                      <?php if ($isEditable && !empty($d['menu_makanan'])): ?>
+                        <i class="bi bi-pencil-square text-secondary"></i>
                       <?php endif; ?>
                     </div>
                   </td>
-                  <td><?= esc($d['nama_operator']) ?></td>
+                  <td class="operator"><?= esc($d['nama_operator']) ?></td>
                 </tr>
               <?php endforeach; ?>
-            <?php else: ?>
-              <tr>
-                <td colspan="6" class="text-center">Tidak ada data yang ditemukan.</td>
-              </tr>
             <?php endif; ?>
           </tbody>
         </table>
       </div>
 
-      <?php if ($tanggalFilter <= date("Y-m-d")): ?>
+      <?php if ($tanggalFilter <= date("Y-m-d") && $isDay): ?>
         <a href="<?= site_url('food-pickup/export-pdf?' . http_build_query(array_filter($currentFilters))) ?>" target="_blank" class="btn btn-outline-primary">
           <i class="bi bi-printer me-2"></i>Cetak PDF
         </a>
@@ -259,29 +232,33 @@
     </form>
   <?php endif; ?>
 
-
   <!-- Modal Input Catatan -->
-  <?php if ($isEditable): ?>
-    <div class="modal fade" id="catatanModal" tabindex="-1" aria-labelledby="catatanModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Catatan - <b id="modalStudentName"></b></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="modalStudentId">
-            <textarea class="form-control" id="modalStudentNote" rows="3" placeholder="Contoh: Alergi, Tidak makan sayur, dll..."></textarea>
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Detail - <b id="modalStudentName"></b></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="modalStudentId">
+          <p class="fw-bold mb-1">Menu Makanan :</p>
+          <p id="modalStudentFood"></p>
+          <label for="modalStudentNote" class="form-label fw-bold">Catatan :</label>
+          <textarea class="form-control" id="modalStudentNote" rows="3" placeholder="Contoh: Alergi, Tidak makan sayur, dll..." <?= !$isEditable ? 'disabled' : '' ?>></textarea>
+          <?php if ($isEditable): ?>
             <div class="form-text text-muted">Klik "Set Catatan" untuk menyimpan sementara ke tabel. Klik tombol hijau "Simpan" di pojok kanan bawah untuk menyimpan ke database.</div>
-          </div>
+          <?php endif; ?>
+        </div>
+        <?php if ($isEditable): ?>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
             <button type="button" class="btn btn-primary" id="btnSetCatatan">Set Catatan</button>
           </div>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
-  <?php endif; ?>
+  </div>
 
   <script>
     const checkedAll = document.querySelector('#checkedAll')
@@ -303,20 +280,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      const catatanModal = document.getElementById('catatanModal');
+      const detailModal = document.getElementById('detailModal');
 
-      if (catatanModal) {
-        catatanModal.addEventListener('show.bs.modal', function(event) {
-          const button = event.relatedTarget;
+      if (detailModal) {
+        detailModal.addEventListener('show.bs.modal', function(event) {
+          const button = event.relatedTarget.closest('tr');
 
           const id = button.getAttribute('data-student-id');
           const name = button.getAttribute('data-student-name');
+          const food = button.getAttribute('data-student-food');
 
           const currentVal = document.getElementById('input_catatan_' + id).value;
 
           document.getElementById('modalStudentId').value = id;
           document.getElementById('modalStudentName').textContent = name;
           document.getElementById('modalStudentNote').value = currentVal;
+          document.getElementById('modalStudentFood').textContent = food;
         });
 
         document.getElementById('btnSetCatatan').addEventListener('click', function() {
@@ -326,15 +305,24 @@
           document.getElementById('input_catatan_' + id).value = val;
 
           const displaySpan = document.getElementById('display_catatan_' + id);
-          if (val.trim() !== "") {
-            displaySpan.innerHTML = val;
-          }
+          displaySpan.innerHTML = val;
 
-          const modalInstance = bootstrap.Modal.getInstance(catatanModal);
+          const modalInstance = bootstrap.Modal.getInstance(detailModal);
           modalInstance.hide();
         });
       }
     });
+
+    function isFoodExist(e, menuMakanan) {
+      if (!menuMakanan || menuMakanan.trim() === '') {
+        e.preventDefault();
+        Swal.fire({
+          title: "Warning!",
+          text: "Anda belum memasukkan data menu makanan pada siswa tersebut!",
+          icon: "warning"
+        });
+      }
+    }
   </script>
 </div>
 <?= $this->endSection() ?>

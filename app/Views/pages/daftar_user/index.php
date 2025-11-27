@@ -94,7 +94,7 @@
           <?php foreach ($daftarUser as $user): ?>
             <tr>
               <td><?= ++$no ?></td>
-              <td><?= esc($user['nama_lengkap']) ?></td>
+              <td><?= $user['role'] === 'ortu' ? 'OrTu ' : null ?><?= esc($user['nama_lengkap']) ?></td>
               <td><?= ucfirst(esc($user['role'])) ?></td>
               <td><?= esc($user['username']) ?></td>
               <td><?= formatTanggalIndo(esc($user['created_at'])) ?></td>

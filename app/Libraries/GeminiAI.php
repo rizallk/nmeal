@@ -36,7 +36,8 @@ class GeminiAI
           'Content-Type' => 'application/json'
         ],
         'json' => $body,
-        'http_errors' => false
+        'http_errors' => false,
+        'verify' => false
       ]);
 
       $result = json_decode($response->getBody(), true);

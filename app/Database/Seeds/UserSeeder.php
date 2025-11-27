@@ -28,9 +28,9 @@ class UserSeeder extends Seeder
         'updated_at'   => date('Y-m-d H:i:s'),
       ],
       [
-        'nama_lengkap' => 'Budi Herlambang',
+        'nama_lengkap' => 'Budi Santoso',
         'role'         => 'ortu',
-        'username'     => 'budi123',
+        'username'     => '0051234567',
         'password'     => password_hash('12345', PASSWORD_DEFAULT), // Password default: 123456
         'foto'         => '',
         'created_at'   => date('Y-m-d H:i:s'),

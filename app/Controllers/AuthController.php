@@ -2,12 +2,28 @@
 
 namespace App\Controllers;
 
+use App\Models\StudentModel;
 use App\Models\UserModel;
 
 class AuthController extends BaseController
 {
-    public function index(): string
+    protected $userModel;
+    protected $studentModel;
+
+    public function __construct()
     {
+        $this->userModel = new UserModel();
+        $this->studentModel = new StudentModel();
+    }
+
+    public function index()
+    {
+        $loggedIn = session()->get('loggedIn');
+
+        if ($loggedIn) {
+            return redirect()->to('/dashboard');
+        }
+
         return view('pages/login');
     }
 
@@ -33,22 +49,24 @@ class AuthController extends BaseController
         }
 
         // Proses otentikasi pengguna
-        $model = new UserModel();
         $session = session();
 
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $user = $model->where('username', $username)->first();
+        $user = $this->userModel->where('username', $username)->first();
 
         if ($user) {
             if (password_verify($password, $user['password'])) {
+                $studentId = $this->studentModel->where('nis', $user['username'])->first();
+
                 $ses_data = [
                     'nama' => $user['nama_lengkap'],
                     'userId' => $user['id'],
                     'userRole' => $user['role'],
                     'username' => $user['username'],
                     'userFoto' => $user['foto'],
+                    'studentId' => $user['role'] == 'ortu' ? $studentId['id'] : null,
                     'loggedIn' => TRUE
                 ];
                 $session->set($ses_data);

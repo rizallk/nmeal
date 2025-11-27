@@ -18,6 +18,7 @@ class CreateStudentsTable extends Migration
             'nis' => [
                 'type' => 'VARCHAR',
                 'constraint' => '50',
+                'unique' => true,
             ],
             'nama_lengkap' => [
                 'type' => 'VARCHAR',

@@ -1,0 +1,102 @@
+.food-pickup .table .status-checkbox {
+  position: relative;
+  width: 40px;
+}
+
+.food-pickup .table .nama {
+  position: relative;
+  width: 250px;
+}
+
+.food-pickup .table .status {
+  position: relative;
+  width: 80px;
+}
+
+.food-pickup .table .operator {
+  position: relative;
+  width: 200px;
+}
+
+.food-pickup .table th.menu-makanan {
+  width: 250px;
+}
+
+.food-pickup .table td.menu-makanan {
+  cursor: pointer;
+  position: relative;
+  max-width: 250px;
+  vertical-align: middle;
+}
+
+.food-pickup .table td.menu-makanan .bi {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  font-size: 0.8rem;
+}
+
+.food-pickup .table td.menu-makanan span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 22px;
+}
+
+.food-pickup .table th.catatan {
+  width: 200px;
+}
+
+.food-pickup .table td.catatan {
+  cursor: pointer;
+  position: relative;
+  max-width: 200px;
+  vertical-align: middle;
+}
+
+.food-pickup .table td.catatan .bi {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  font-size: 0.8rem;
+}
+
+.food-pickup .table td.catatan span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 22px;
+}
+
+.food-pickup .table td.nama,
+td.operator {
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.food-pickup .table .form-check-input {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.food-pickup .info-is-editable {
+  display: flex;
+  justify-content: left;
+}
+
+.food-pickup .buttons {
+  position: fixed;
+  bottom: -8px;
+  right: 20px;
+  z-index: 1009;
+}
+
+@media (min-width: 768px) {
+  .food-pickup .info-is-editable {
+    justify-content: end;
+  }
+}

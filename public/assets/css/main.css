@@ -12,6 +12,10 @@
   font-weight: bold;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .accent-color-bg {
   background-color: var(--accent-color);
 }

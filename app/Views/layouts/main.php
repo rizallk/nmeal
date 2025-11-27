@@ -5,12 +5,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <?= csrf_meta() ?>
-  <title><?= !empty($page_title) ? "$page_title - NMeal" : 'NMeal' ?></title>
+  <title><?= !empty($pageTitle) ? "$pageTitle - NMeal - " : 'NMeal - ' ?><?= getenv('SCHOOL_NAME') ?></title>
+
+  <!-- Untuk kebutuhan PWA -->
   <!-- 
   <link rel="manifest" href="/manifest.json">
-
   <meta name="theme-color" content="#000000">
-
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="NMeal">
@@ -36,6 +36,7 @@
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- <script>
     // Script untuk mendaftarkan Service Worker (PWA)

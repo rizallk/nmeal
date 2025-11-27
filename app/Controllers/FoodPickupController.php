@@ -37,12 +37,14 @@ class FoodPickupController extends BaseController
                 students.nama_lengkap as nama_siswa, 
                 students.kelas, 
                 food_pickups.status, 
+                foods.name as menu_makanan,
                 food_pickups.catatan, 
-                food_pickups.created_at, 
                 users.nama_lengkap as nama_operator
             ')
       ->join('food_pickups', $onClause, 'left')
-      ->join('users', 'users.id = food_pickups.user_id', 'left');
+      ->join('users', 'users.id = food_pickups.user_id', 'left')
+      ->join('student_foods', 'student_foods.student_id = students.id', 'left')
+      ->join('foods', 'foods.id = student_foods.food_id', 'left');
 
     $query = $query->where('students.kelas', $kelasFilter);
 
@@ -168,7 +170,7 @@ class FoodPickupController extends BaseController
 
       $existing_map = [];
       foreach ($existing_pickups as $pickup) {
-        $existing_map[$pickup['student_id']] = $pickup['id'];
+        $existing_map[$pickup['student_id']] = $pickup;
       }
 
       $insert_data = [];
@@ -178,16 +180,17 @@ class FoodPickupController extends BaseController
       $timestamp = $tanggal . ' ' . date('H:i:s');
 
       foreach ($all_students_in_class as $student_id) {
-        $is_checked = in_array($student_id, $submitted_student_ids);
+        $is_checked_form = in_array($student_id, $submitted_student_ids);
         $is_existing = array_key_exists($student_id, $existing_map);
-
         $catatan_siswa = !empty($catatan_list[$student_id]) ? $catatan_list[$student_id] : null;
 
-        if ($is_checked) {
+        if ($is_checked_form || $catatan_siswa) {
+          $final_status = $is_checked_form ? 1 : 0;
+
           if ($is_existing) {
             $update_data[] = [
-              'id' => $existing_map[$student_id],
-              'status' => 1,
+              'id' => $existing_map[$student_id]['id'],
+              'status' => $final_status,
               'user_id' => $operator_id,
               'catatan' => $catatan_siswa,
               'updated_at' => $timestamp
@@ -196,7 +199,7 @@ class FoodPickupController extends BaseController
             $insert_data[] = [
               'student_id' => $student_id,
               'user_id' => $operator_id,
-              'status' => 1,
+              'status' => $final_status,
               'catatan' => $catatan_siswa,
               'created_at' => $timestamp,
               'updated_at' => $timestamp
@@ -204,7 +207,7 @@ class FoodPickupController extends BaseController
           }
         } else {
           if ($is_existing) {
-            $ids_to_delete[] = $existing_map[$student_id];
+            $ids_to_delete[] = $existing_map[$student_id]['id'];
           }
         }
       }

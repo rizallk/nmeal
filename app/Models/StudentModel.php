@@ -18,7 +18,7 @@ class StudentModel extends Model
   protected $updatedField = 'updated_at';
 
   protected $validationRules = [
-    'nis' => 'required|min_length[3]|max_length[50]',
+    'nis' => 'required|min_length[3]|max_length[50]|is_unique[students.nis]',
     'nama_lengkap' => 'required|min_length[3]|max_length[255]',
     'kelas' => 'required',
   ];
@@ -26,6 +26,7 @@ class StudentModel extends Model
   protected $validationMessages = [
     'nis' => [
       'required' => 'NIS wajib diisi.',
+      'is_unique' => 'NIS sudah terdaftar.',
       'min_length' => 'NIS minimal 3 karakter.',
       'max_length' => 'NIS maksimal 50 karakter.'
     ],

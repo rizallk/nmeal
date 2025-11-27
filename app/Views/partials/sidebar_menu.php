@@ -30,19 +30,28 @@ $currentPage = service('uri')->getSegment(1);
     </li>
 
     <!-- Pengambilan Makanan -->
-    <li class="nav-item mb-2">
-      <a href="/food-pickup" class="nav-link rounded d-flex <?= ($currentPage == 'food-pickup') ? 'active' : '' ?>">
-        <i class="bi bi-file-text-fill me-2"></i>
-        <span>Pengambilan Makanan</span>
-      </a>
-    </li>
+    <?php if (session()->get('userRole') === 'ortu'): ?>
+      <li class="nav-item mb-2">
+        <a href="/food-activity" class="nav-link rounded d-flex <?= ($currentPage == 'food-activity') ? 'active' : '' ?>">
+          <i class="bi bi-file-text-fill me-2"></i>
+          <span>Aktivitas Makan</span>
+        </a>
+      </li>
+    <?php else: ?>
+      <li class="nav-item mb-2">
+        <a href="/food-pickup" class="nav-link rounded d-flex <?= ($currentPage == 'food-pickup') ? 'active' : '' ?>">
+          <i class="bi bi-file-text-fill me-2"></i>
+          <span>Pengambilan Makanan</span>
+        </a>
+      </li>
+    <?php endif; ?>
 
-    <!-- Biodata -->
+    <!-- Profil -->
     <?php if (session()->get('userRole') == 'ortu'): ?>
       <li class="nav-item mb-2">
-        <a href="/biodata" class="nav-link rounded d-flex <?= ($currentPage == 'biodata') ? 'active' : '' ?>">
-          <i class="bi bi-person me-2"></i>
-          <span>Biodata</span>
+        <a href="/profil" class="nav-link rounded d-flex <?= ($currentPage == 'profil') ? 'active' : '' ?>">
+          <i class="bi bi-person-fill me-2"></i>
+          <span>Profil</span>
         </a>
       </li>
     <?php endif; ?>

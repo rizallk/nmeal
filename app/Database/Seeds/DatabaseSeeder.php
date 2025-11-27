@@ -17,10 +17,12 @@ class DatabaseSeeder extends Seeder
   {
     // Panggil seeder dengan urutan yang benar untuk menghindari error foreign key
     $this->call('UserSeeder');
+    $this->call('StudentSeeder');
     $this->call('IngredientSeeder');
     $this->call('AllergenSeeder');
     $this->call('FoodSeeder');
-    $this->call('StudentSeeder');
     $this->call('FoodPickupSeeder');
+
+    $this->call('StudentFoodSeeder');
   }
 }

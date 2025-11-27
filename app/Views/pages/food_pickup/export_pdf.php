@@ -38,12 +38,10 @@
     th,
     td {
       padding: 8px;
-      text-align: left;
     }
 
     th {
       background-color: #f2f2f2;
-      text-align: center;
     }
 
     .text-center {
@@ -71,25 +69,26 @@
 
   <div class="header">
     <h2>Laporan Pengambilan Makanan</h2>
-    <p>Kelas: <?= $kelas ?></p>
-    <p>Tanggal: <?= date('d-m-Y', strtotime($tanggal)) ?></p>
+    <h4>Kelas: <?= $kelas ?></h4>
+    <h4>Tanggal: <?= date('d-m-Y', strtotime($tanggal)) ?></h4>
   </div>
 
   <table>
     <thead>
       <tr>
         <th style="width: 5%;">No</th>
-        <th style="width: 30%;">Nama Siswa</th>
-        <th style="width: 10%;">Status</th>
-        <th style="width: 35%;">Catatan</th>
-        <th style="width: 20%;">Operator</th>
+        <th style="width: 20%;">Nama Siswa</th>
+        <th class="text-center" style="width: 8%;">Status</th>
+        <th style="width: 26%;">Menu Makanan</th>
+        <th style="width: 26%;">Catatan</th>
+        <th style="width: 15%;">Operator</th>
       </tr>
     </thead>
     <tbody>
       <?php $no = 1;
       foreach ($data as $row): ?>
         <tr>
-          <td class="text-center"><?= $no++ ?></td>
+          <td><?= $no++ ?></td>
           <td><?= esc($row['nama_siswa']) ?></td>
           <td class="text-center">
             <?php if ($row['status'] == 1): ?>
@@ -98,6 +97,7 @@
               <span class="badge bg-danger">BELUM</span>
             <?php endif; ?>
           </td>
+          <td><?= esc($row['menu_makanan']) ?></td>
           <td><?= esc($row['catatan']) ?></td>
           <td><?= esc($row['nama_operator']) ?></td>
         </tr>

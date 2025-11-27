@@ -9,8 +9,9 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md">
-        <div class="logo-wrapper d-flex justify-content-center align-items-center">
-          <img class="logo py-5" src="<?= base_url('assets/images/logo.jpeg') ?>" alt="Logo" />
+        <div class="logo-wrapper d-flex justify-content-center align-items-center flex-column py-5">
+          <img class="logo pb-5" src="<?= base_url('assets/images/logo.jpeg') ?>" alt="Logo" />
+          <h3 style="font-weight: 700;"><?= getenv('SCHOOL_NAME') ?></h3>
         </div>
       </div>
       <div class="col-md content-column">

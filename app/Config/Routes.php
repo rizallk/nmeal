@@ -36,3 +36,6 @@ $routes->post('/tambah-siswa/register', 'DaftarSiswaController::register', ['fil
 $routes->get('/edit-siswa/(:num)', 'DaftarSiswaController::edit/$1', ['filter' => 'authcheck']);
 $routes->post('/update-siswa/(:num)', 'DaftarSiswaController::update/$1', ['filter' => 'authcheck']);
 $routes->post('/delete-siswa/(:num)', 'DaftarSiswaController::delete/$1', ['filter' => 'authcheck']);
+
+// Aktivitas makan siswa
+$routes->get('/food-activity', 'FoodActivityStudentController::index', ['filter' => 'authcheck']);
