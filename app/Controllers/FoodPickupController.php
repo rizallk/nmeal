@@ -324,7 +324,7 @@ class FoodPickupController extends BaseController
       'VAPID' => [
         "subject" => "mailto:rizallkadamong@gmail.com",
         "publicKey" => "BNHQu8Oo9mQSFH-oS8NIJlALTkenlIWb0SerlB45_EB88Qj9Sg3EU9lCgtPGcJioJZAOMCJmIxWdwvwtBGib-hE",
-        "privateKey" => "driiCUZxFzzvFyi7priistTqEJZRMzMjcK6gRPJ5buo"
+        "privateKey" => getenv('VAPID_PRIVATE_KEY')
       ],
     ];
 
