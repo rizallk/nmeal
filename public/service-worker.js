@@ -1,19 +1,21 @@
-// Nama cache Anda (buat unik)
+// Nama cache unik
 const CACHE_NAME = 'ci4-pwa-cache-v1';
-const SYNC_DB_NAME = 'pending-requests-db';
-const SYNC_STORE_NAME = 'pending-requests-store';
 
-// Aset "App Shell" yang ingin Anda cache saat instalasi
-// Ini adalah file statis dari folder public/ Anda
 const appShellFiles = [
   '/', // Halaman utama (hasil render CI4)
   '/manifest.json',
   '/offline.html', // Halaman fallback jika offline
 
+  // JS Files
+  '/assets/js/pages/food-pickup.js',
+  '/assets/js/getFormattedDate.js',
+  '/assets/js/offlineSync.js',
+  '/assets/js/main.js',
   // CSS Files
   '/assets/css/components/sidebar_menu.css',
   '/assets/css/components/topbar.css',
   '/assets/css/pages/landing.css',
+  '/assets/css/pages/food_pickup.css',
   '/assets/css/pages/login.css',
   '/assets/css/main.css',
   // Key Images (Logo & gambar default)
@@ -22,17 +24,18 @@ const appShellFiles = [
   '/assets/images/logo.jpeg',
   // App icon
   '/icons/android-icon-192x192.png',
+  '/icons/android-icon-72x72.png',
   // CDN
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
+  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
+  'https://cdn.jsdelivr.net/npm/sweetalert2@11',
 ];
 
-// 1. Event: Install
+// Event: Install
 // Dipanggil saat Service Worker pertama kali diinstal
 self.addEventListener('install', (event) => {
   console.log('[ServiceWorker] Install');
-  // Tunggu sampai semua aset app shell di-cache
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[ServiceWorker] Caching App Shell');
@@ -41,7 +44,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// 2. Event: Activate
+// Event: Activate
 // Dipanggil setelah instalasi berhasil. Berguna untuk membersihkan cache lama.
 self.addEventListener('activate', (event) => {
   console.log('[ServiceWorker] Activate');
@@ -49,7 +52,6 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          // Hapus cache lama jika namanya tidak sama dengan CACHE_NAME
           if (cacheName !== CACHE_NAME) {
             console.log('[ServiceWorker] Removing old cache', cacheName);
             return caches.delete(cacheName);
@@ -61,33 +63,33 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// 3. Event: Fetch
-// Dipanggil setiap kali ada permintaan jaringan (request) dari aplikasi Anda
-// Ini adalah tempat kita mengimplementasikan strategi caching
+// Event: Fetch
+// Dipanggil setiap kali ada permintaan jaringan (request) dari aplikasi
 self.addEventListener('fetch', (event) => {
-  // Kita hanya ingin memproses request GET.
-  // Request POST, PUT, DELETE, dll. biarkan langsung ke server.
-  if (event.request.method !== 'GET') {
-    return fetch(event.request);
+  const url = new URL(event.request.url);
+
+  if (
+    url.pathname.includes('browser-sync') ||
+    url.pathname.includes('socket.io')
+  ) {
+    if (!navigator.onLine) {
+      event.respondWith(new Response('', { status: 200, statusText: 'OK' }));
+    }
+    return;
   }
 
-  // Hanya proses request http/https. Abaikan semua skema lain (spt chrome-extension://)
-  // Ini akan memperbaiki error "Request scheme 'chrome-extension' is unsupported".
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   if (!event.request.url.startsWith('http')) {
-    // Biarkan browser menangani request ini secara normal tanpa caching.
-    return fetch(event.request);
+    return;
   }
 
   event.respondWith(
-    // Strategi: Network falling back to Cache
-    // 1. Coba ambil dari jaringan (Network) dulu
     fetch(event.request)
-      .then((networkResponse) => {
-        // Jika berhasil, simpan di cache dan kembalikan
+      .then(async (networkResponse) => {
         return caches.open(CACHE_NAME).then((cache) => {
-          // Pastikan kita hanya meng-cache respons yang valid (status 200)
-          // dan (meskipun sudah kita filter) kita pastikan lagi ini GET.
-          // Ini juga mencegah caching respons error (seperti 404, 500).
           if (
             networkResponse &&
             networkResponse.status === 200 &&
@@ -98,30 +100,61 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         });
       })
-      .catch(() => {
-        // 2. Jika Jaringan Gagal (offline), coba ambil dari Cache
+      .catch(async () => {
         return caches.match(event.request).then((cachedResponse) => {
-          // Jika ada di cache, kembalikan dari cache
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // Jika tidak ada di cache sama sekali, kembalikan halaman offline
+          if (cachedResponse) return cachedResponse;
           return caches.match('/offline.html');
         });
       })
   );
 });
 
-// Event listener untuk saat notifikasi di-klik
+// Event: Push Notification
+self.addEventListener('push', function (event) {
+  if (!(self.Notification && self.Notification.permission === 'granted')) {
+    return;
+  }
+
+  let title = 'Info Baru';
+  let body = 'Ada notifikasi masuk';
+  let targetUrl = '/';
+
+  try {
+    const data = event.data ? event.data.json() : {};
+    title = data.title;
+    body = data.body;
+    targetUrl = data.url;
+  } catch (e) {
+    body = event.data.text();
+  }
+
+  const options = {
+    body: body,
+    icon: '/icons/android-icon-192x192.png',
+    data: {
+      url: targetUrl,
+    },
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Event listener saat notifikasi di-klik
 self.addEventListener('notificationclick', function (event) {
-  console.log('[Service Worker] Notifikasi di-klik.');
-
-  // 1. Tutup notifikasi yang di-klik
   event.notification.close();
-
-  // 2. Ambil URL dari data yang kita kirim
-  const targetUrl = event.notification.data.url || '/';
-
-  // 3. Buka tab/window baru ke URL tersebut
-  event.waitUntil(clients.openWindow(targetUrl));
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((windowClients) => {
+      // Jika tab sudah terbuka, fokuskan
+      for (let i = 0; i < windowClients.length; i++) {
+        let client = windowClients[i];
+        if (client.url === event.notification.data.url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // Jika belum, buka tab baru
+      if (clients.openWindow) {
+        return clients.openWindow(event.notification.data.url);
+      }
+    })
+  );
 });

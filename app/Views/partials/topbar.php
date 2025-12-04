@@ -17,16 +17,6 @@
       <img class="logo" src="<?= base_url('assets/images/logo-horizontal.png') ?>" alt="Logo" />
     </div>
     <div class="d-flex align-items-center ms-auto">
-      <div class="dropdown notification">
-        <div class="button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi bi-bell-fill"></i>
-        </div>
-        <ul class="dropdown-menu shadow dropdown-menu-end">
-          <li><a class="dropdown-item" href="#">Lihat Profil</a></li>
-          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Keluar</a></li>
-        </ul>
-      </div>
-      <div class="separator text-secondary mx-3" style="opacity: 0.5;">|</div>
       <span class="me-2 fw-bold name"><?= session()->get('username') ?></span>
       <div class="dropdown">
         <div class="button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

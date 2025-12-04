@@ -9,6 +9,7 @@ class FoodPickupModel extends Model
   protected $table = 'food_pickups';
   protected $allowedFields = [
     'student_id',
+    'food_id',
     'user_id',
     'status',
     'catatan'
@@ -20,6 +21,7 @@ class FoodPickupModel extends Model
 
   protected $validationRules = [
     'student_id' => 'required|is_natural_no_zero',
+    'food_id' => 'required|is_natural_no_zero',
     'user_id' => 'required|is_natural_no_zero',
     'status' => 'required|in_list[0,1]',
     'catatan' => 'permit_empty|max_length[255]',

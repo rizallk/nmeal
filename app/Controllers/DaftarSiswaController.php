@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\FoodModel;
-use App\Models\StudentFoodModel;
+use App\Models\AllergenModel;
+use App\Models\StudentAllergenModel;
 use App\Models\StudentModel;
 use App\Models\UserModel;
 
@@ -11,12 +11,16 @@ class DaftarSiswaController extends BaseController
 {
   protected $studentModel;
   protected $userModel;
+  protected $allergenModel;
+  protected $studentAllergenModel;
   protected $userRole;
 
   public function __construct()
   {
     $this->studentModel = new StudentModel();
     $this->userModel = new UserModel();
+    $this->allergenModel = new AllergenModel();
+    $this->studentAllergenModel = new StudentAllergenModel();
     $this->userRole = session()->get('userRole');
   }
 
@@ -34,18 +38,22 @@ class DaftarSiswaController extends BaseController
     // Dapatkan halaman saat ini dari URL, defaultnya adalah 1
     $currentPage = $this->request->getGet('page') ?? 1;
     $startNumber = ($currentPage - 1) * $perPage; // Logika numbering
-    $query = $this->studentModel;
+    $query = $this->studentModel
+      ->select('students.*, GROUP_CONCAT(allergens.name SEPARATOR ", ") as allergens')
+      ->join('student_allergens', 'student_allergens.student_id = students.id', 'left')
+      ->join('allergens', 'allergens.id = student_allergens.allergen_id', 'left')
+      ->groupBy('students.id');
 
     if (!empty($kelasFilter)) {
-      $query = $query->where('kelas', $kelasFilter);
+      $query = $query->where('students.kelas', $kelasFilter);
     }
 
     // Logika Search
     if (!empty($search)) {
       $query = $query->groupStart()
-        ->like('nama_lengkap', $search)
-        ->orLike('nis', $search)
-        ->orLike('kelas', $search)
+        ->like('students.nama_lengkap', $search)
+        ->orLike('students.nis', $search)
+        ->orLike('students.kelas', $search)
         ->groupEnd();
     }
 
@@ -86,6 +94,7 @@ class DaftarSiswaController extends BaseController
 
     $data = [
       'pageTitle' => 'Tambah Siswa',
+      'allergens' => $this->allergenModel->select('id, name')->findAll()
     ];
 
     return view('pages/daftar_siswa/tambah', $data);
@@ -105,6 +114,31 @@ class DaftarSiswaController extends BaseController
     if (!$this->studentModel->save($dataStudent)) {
       $db->transRollback();
       return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
+    }
+
+    $studentId = $this->studentModel->getInsertID();
+
+    $allergens = $this->request->getPost('allergens');
+
+    foreach ($allergens as $allergenId) {
+      $dataAllergenBatch[] = [
+        'student_id'  => $studentId,
+        'allergen_id' => $allergenId
+      ];
+    }
+
+    if ($allergens && is_array($allergens)) {
+      $dataAllergenBatch = [];
+      foreach ($allergens as $allergenId) {
+        $dataAllergenBatch[] = [
+          'student_id'  => $studentId,
+          'allergen_id' => $allergenId
+        ];
+      }
+
+      if (!empty($dataAllergenBatch)) {
+        $this->studentAllergenModel->insertBatch($dataAllergenBatch);
+      }
     }
 
     if ($this->request->getPost('create_parent_account')) {
@@ -145,6 +179,8 @@ class DaftarSiswaController extends BaseController
     $data = [
       'pageTitle' => 'Edit Siswa - ' . $siswa['nama_lengkap'],
       'siswa'  => $siswa,
+      'allergens' => $this->allergenModel->select('id, name')->findAll(),
+      'studentAllergens' => $this->studentAllergenModel->where('student_id', $id)->findAll()
     ];
 
     return view('pages/daftar_siswa/edit', $data);
@@ -161,26 +197,52 @@ class DaftarSiswaController extends BaseController
     $db = \Config\Database::connect(); // Instance database
     $db->transBegin();
 
+    $newNIS = $this->request->getPost('nis');
+    $oldNIS = $this->request->getPost('old_nis');
+
     // Data Student
     $dataStudent = [
       'id' => $id,
-      'nis' => $this->request->getPost('nis'),
       'nama_lengkap' => $this->request->getPost('nama_lengkap'),
       'kelas' => $this->request->getPost('kelas'),
     ];
+
+    if ($newNIS !== $oldNIS) {
+      $dataStudent['nis'] = $newNIS;
+    };
 
     if (!$this->studentModel->save($dataStudent)) {
       $db->transRollback();
       return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
     }
 
+    // Data alergen siswa
+    $this->studentAllergenModel->where('student_id', $id)->delete();
+    $allergens = $this->request->getPost('allergens');
+
+    if ($allergens && is_array($allergens)) {
+      $dataAllergenBatch = [];
+      foreach ($allergens as $allergenId) {
+        $dataAllergenBatch[] = [
+          'student_id'  => $id,
+          'allergen_id' => $allergenId
+        ];
+      }
+
+      if (!empty($dataAllergenBatch)) {
+        $this->studentAllergenModel->insertBatch($dataAllergenBatch);
+      }
+    }
+
     // Data User
     $dataUser = [
       'nama_lengkap' => $dataStudent['nama_lengkap'],
-      'username' => $dataStudent['nis'],
-      'password' => $dataStudent['nis'] . '@' . $dataStudent['kelas']
     ];
-    $oldNIS = $this->request->getPost('old_nis');
+
+    if ($newNIS !== $oldNIS) {
+      $dataUser['username'] = $dataStudent['nis'];
+      $datauser['password'] = $dataStudent['nis'] . '@' . $dataStudent['kelas'];
+    };
 
     $existingData = $this->userModel->where('username', $oldNIS)->first();
     if ($existingData) {

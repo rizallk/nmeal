@@ -9,6 +9,24 @@
   .daftar-siswa .table tr td {
     white-space: nowrap;
   }
+
+  .daftar-siswa .table th.alergen {
+    width: 350px;
+  }
+
+  .daftar-siswa .table td.alergen {
+    position: relative;
+    max-width: 350px;
+    vertical-align: middle;
+  }
+
+  .daftar-siswa .table td.alergen span {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>
 <?= $this->endSection() ?>
 
@@ -27,7 +45,7 @@
     </div>
   <?php endif; ?>
   <div class="header mb-1">
-    <form id="search-form" action="<?= site_url('daftar-siswa') ?>" method="get">
+    <form action="<?= site_url('daftar-siswa') ?>" method="get">
       <div class="row">
         <div class="col-md">
           <div class="row mb-3">
@@ -84,7 +102,7 @@
                 Nama <?= getSortIcon('nama_lengkap', $sortColumn, $sortOrder) ?>
               </a>
             </th>
-            <th>Kelas</th>
+            <th class="alergen">Alergen</th>
             <th class="text-center action">Aksi</th>
           </tr>
         </thead>
@@ -96,7 +114,13 @@
                 <td><?= ++$no ?></td>
                 <td><?= esc($siswa['nis']) ?></td>
                 <td><?= esc($siswa['nama_lengkap']) ?></td>
-                <td><?= esc($siswa['kelas']) ?></td>
+                <td class="alergen"
+                  <?php if (!empty($siswa['allergens'])) : ?>
+                  data-bs-toggle="tooltip"
+                  data-bs-title="<?= esc($siswa['allergens']) ?>"
+                  <?php endif; ?>>
+                  <span><?= esc($siswa['allergens']) ?></span>
+                </td>
                 <td class="text-center">
                   <a href="<?= site_url('edit-siswa/' . $siswa['id']) ?>" class="text-warning me-2">Edit</a>
                   <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-siswa-id="<?= $siswa['id'] ?>" data-siswa-name="<?= esc($siswa['nama_lengkap']) ?>" title="Hapus Siswa" class="text-danger">Hapus</a>
@@ -145,14 +169,11 @@
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda.");
-      }
-    });
-    document.getElementById('search-form').addEventListener('submit', function(event) {
-      if (!navigator.onLine) {
-        event.preventDefault();
-
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan pencarian sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda',
+          icon: 'info',
+        })
       }
     });
 
@@ -178,6 +199,9 @@
         });
       }
     });
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
 </div>
 <?= $this->endSection() ?>

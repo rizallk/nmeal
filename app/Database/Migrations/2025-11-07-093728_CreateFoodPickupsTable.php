@@ -19,6 +19,13 @@ class CreateFoodPickupsTable extends Migration
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
+                'null' => true
+            ],
+            'food_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true
             ],
             'user_id' => [
                 'type' => 'INT',
@@ -55,6 +62,7 @@ class CreateFoodPickupsTable extends Migration
 
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'SET NULL');
         // 'SET NULL' berarti jika user dihapus, semua food pickups terkait akan berubah menjadi null.
+        $this->forge->addForeignKey('food_id', 'foods', 'id', 'CASCADE', 'SET NULL');
 
         $this->forge->createTable('food_pickups');
     }

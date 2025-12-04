@@ -11,6 +11,7 @@
 .food-pickup .table .status {
   position: relative;
   width: 80px;
+  text-align: center;
 }
 
 .food-pickup .table .operator {
@@ -25,18 +26,33 @@
 .food-pickup .table td.menu-makanan {
   cursor: pointer;
   position: relative;
+  max-width: 200px;
+  vertical-align: middle;
+}
+
+.food-pickup .table td.menu-makanan span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.food-pickup .table td.nama {
+  cursor: pointer;
+  position: relative;
   max-width: 250px;
   vertical-align: middle;
 }
 
-.food-pickup .table td.menu-makanan .bi {
+.food-pickup .table td.nama .bi {
   position: absolute;
   right: 10px;
   top: 12px;
   font-size: 0.8rem;
 }
 
-.food-pickup .table td.menu-makanan span {
+.food-pickup .table td.nama span {
   display: block;
   width: 100%;
   white-space: nowrap;
@@ -56,20 +72,12 @@
   vertical-align: middle;
 }
 
-.food-pickup .table td.catatan .bi {
-  position: absolute;
-  right: 10px;
-  top: 12px;
-  font-size: 0.8rem;
-}
-
 .food-pickup .table td.catatan span {
   display: block;
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 22px;
 }
 
 .food-pickup .table td.nama,
@@ -93,6 +101,13 @@ td.operator {
   bottom: -8px;
   right: 20px;
   z-index: 1009;
+}
+
+.food-pickup .modal .alergen-list {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  max-height: 125px;
+  overflow-y: auto;
 }
 
 @media (min-width: 768px) {
