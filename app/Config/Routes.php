@@ -20,6 +20,8 @@ $routes->get('dashboard/recommendation', 'DashboardController::getRecommendation
 $routes->get('/food-pickup', 'FoodPickupController::index', ['filter' => 'authcheck']);
 $routes->get('food-pickup/export-pdf', 'FoodPickupController::exportPdf', ['filter' => 'authcheck']);
 $routes->post('/food-pickup/save', 'FoodPickupController::save', ['filter' => 'authcheck']);
+// Get Student Allergens
+$routes->get('food-pickup/get-allergens/(:num)', 'FoodPickupController::getStudentAllergens/$1', ['filter' => 'authcheck']);
 
 // Daftar user
 $routes->get('/daftar-user', 'DaftarUserController::index', ['filter' => 'authcheck']);
@@ -47,3 +49,7 @@ $routes->post('/delete-makanan/(:num)', 'DaftarMakananController::delete/$1', ['
 
 // Aktivitas makan siswa
 $routes->get('/food-activity', 'FoodActivityStudentController::index', ['filter' => 'authcheck']);
+
+// Notification
+$routes->post('/notification/subscribe', 'NotificationController::subscribe', ['filter' => 'authcheck']);
+$routes->get('/notification/get-public-key', 'NotificationController::getPublicKey', ['filter' => 'authcheck']);

@@ -38,6 +38,29 @@
   user-select: none;
 }
 
+.card-legend {
+  position: relative;
+  background-color: #fff;
+}
+
+.card-legend .legend {
+  z-index: 5;
+  background-color: #fff;
+  position: relative;
+  width: fit-content;
+}
+
+.card-legend .content-wrapper {
+  transform: translateY(-15px);
+}
+
+.list-group-item:not(.empty-msg) {
+  padding-left: 0;
+  padding-right: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
 .btn-primary-custom {
   --bs-btn-color: #fff;
   --bs-btn-bg: var(--primary-color);

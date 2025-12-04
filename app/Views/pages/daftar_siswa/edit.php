@@ -33,8 +33,13 @@
             <?= $errors && isset($errors['nis']) ? $errors['nis'] : '' ?>
           </div>
         </div>
-      </div>
-      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="nama_lengkap" class="form-label">Nama Lengkap<span class="text-danger">*</span></label>
+          <input type="text" name="nama_lengkap" class="form-control <?= $errors && isset($errors['nama_lengkap']) ? 'is-invalid' : '' ?>" id="nama_lengkap" placeholder="Nama Lengkap" value="<?= old('nama_lengkap',  $siswa['nama_lengkap']) ?>">
+          <div class="invalid-feedback">
+            <?= $errors && isset($errors['nama_lengkap']) ? $errors['nama_lengkap'] : '' ?>
+          </div>
+        </div>
         <div class="mb-3">
           <label for="kelas" class="form-label">Kelas<span class="text-danger">*</span></label>
           <select class="form-select <?= $errors && isset($errors['role']) ? 'is-invalid' : '' ?>" name="kelas" id="kelas">
@@ -69,37 +74,30 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row">
       <div class="col-md-6">
-        <div class="mb-3">
-          <label for="nama_lengkap" class="form-label">Nama Lengkap<span class="text-danger">*</span></label>
-          <input type="text" name="nama_lengkap" class="form-control <?= $errors && isset($errors['nama_lengkap']) ? 'is-invalid' : '' ?>" id="nama_lengkap" placeholder="Nama Lengkap" value="<?= old('nama_lengkap',  $siswa['nama_lengkap']) ?>">
-          <div class="invalid-feedback">
-            <?= $errors && isset($errors['nama_lengkap']) ? $errors['nama_lengkap'] : '' ?>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="mb-3">
-          <label for="menu_makanan" class="form-label">Menu Makanan<span class="text-danger">*</span></label>
-          <select class="form-select <?= $errors && isset($errors['food_id']) ? 'is-invalid' : '' ?>" name="menu_makanan" id="menu_makanan" required>
-            <option value="">Pilih Menu Makanan</option>
-            <?php foreach ($daftarMenuMakanan as $menuMakanan): ?>
-              <option value="<?= $menuMakanan['id'] ?>"
-                <?php
-                $selectedVal = old('menu_makanan', $menuMakananSelected['food_id'] ?? '');
-                ?>
-                <?= $selectedVal == $menuMakanan['id'] ? 'selected' : '' ?>>
-                <?= $menuMakanan['name'] ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-          <small class="form-text text-muted">
-            Menu Makanan yang akan dikonsumsi siswa.
-          </small>
-          <div class="invalid-feedback">
-            <?= $errors && isset($errors['food_id']) ? $errors['food_id'] : '' ?>
+        <div class="card-legend">
+          <div class="legend ms-3 px-2 py-1">Alergen</div>
+          <div class="content-wrapper border rounded-3 p-3">
+            <ul class="list-group list-group-flush mt-1" id="allergen-list">
+              <li class="list-group-item text-muted empty-msg text-center">
+                Tidak ada alergen yang dipilih
+              </li>
+            </ul>
+            <div id="allergen-inputs"></div>
+            <div class="input-group input-group-sm mt-3">
+              <select class="form-select" id="select-allergen">
+                <option value="">Pilih Alergen</option>
+                <?php if (isset($allergens) && !empty($allergens)): ?>
+                  <?php foreach ($allergens as $allergen): ?>
+                    <option value="<?= $allergen['id'] ?>"><?= $allergen['name'] ?></option>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <option value="" disabled>Data alergen kosong</option>
+                <?php endif; ?>
+              </select>
+              <button class="btn btn-outline-secondary" type="button" id="btn-add-allergen">Tambah</button>
+            </div>
+            <small class="text-danger d-none" id="allergen-error">Alergen sudah dipilih!</small>
           </div>
         </div>
       </div>
@@ -112,13 +110,108 @@
   </form>
 
   <script>
+    <?php
+    $oldInput = old('allergens');
+
+    $dbData = [];
+    if (isset($studentAllergens)) {
+      foreach ($studentAllergens as $sa) {
+        $dbData[] = $sa['allergen_id'];
+      }
+    }
+
+    $finalData = $oldInput ? $oldInput : $dbData;
+    ?>
+
+    const initialAllergenIds = <?= json_encode($finalData ?? []) ?>;
+
     // Menampilkan alert ketika submit form dalam keadaan offline
     document.getElementById('form-register').addEventListener('submit', function(event) {
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Data tidak dapat dikirim sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Data tidak dapat dikirim sekarang. Silakan periksa koneksi internet Anda.',
+          icon: 'info',
+        })
       }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnAdd = document.getElementById('btn-add-allergen');
+      const selectAllergen = document.getElementById('select-allergen');
+      const allergenList = document.getElementById('allergen-list');
+      const allergenInputs = document.getElementById('allergen-inputs');
+      const errorMsg = document.getElementById('allergen-error');
+      const emptyMsg = document.querySelector('.empty-msg');
+
+      let selectedAllergens = [];
+
+      function addAllergenToUi(id, text) {
+        if (selectedAllergens.includes(id)) return;
+        if (emptyMsg) emptyMsg.style.display = 'none';
+
+        selectedAllergens.push(id);
+
+        const li = document.createElement('li');
+        li.className = 'list-group-item allergen-item d-flex justify-content-between align-items-center';
+        li.dataset.id = id;
+        li.innerHTML = `
+            <span>${text}</span>
+            <button type="button" class="btn btn-sm text-danger btn-delete-allergen">Hapus</button>
+        `;
+        allergenList.appendChild(li);
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'allergens[]';
+        input.value = id;
+        input.id = `input-allergen-${id}`;
+        allergenInputs.appendChild(input);
+      }
+
+      if (initialAllergenIds.length > 0) {
+        initialAllergenIds.forEach(id => {
+          const option = selectAllergen.querySelector(`option[value="${id}"]`);
+          if (option) {
+            addAllergenToUi(id.toString(), option.text);
+          }
+        });
+      }
+
+      btnAdd.addEventListener('click', function() {
+        const id = selectAllergen.value;
+        if (!id) return;
+
+        if (selectedAllergens.includes(id)) {
+          errorMsg.classList.remove('d-none');
+          setTimeout(() => errorMsg.classList.add('d-none'), 2000);
+          return;
+        }
+
+        const text = selectAllergen.options[selectAllergen.selectedIndex].text;
+        addAllergenToUi(id, text);
+        selectAllergen.value = "";
+      });
+
+      allergenList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('btn-delete-allergen')) {
+          const li = e.target.closest('li');
+          const id = li.dataset.id;
+
+          selectedAllergens = selectedAllergens.filter(item => item !== id);
+
+          const inputToRemove = document.getElementById(`input-allergen-${id}`);
+          if (inputToRemove) inputToRemove.remove();
+
+          li.remove();
+
+          if (selectedAllergens.length === 0 && emptyMsg) {
+            emptyMsg.style.display = 'block';
+          }
+        }
+      });
     });
   </script>
 </div>

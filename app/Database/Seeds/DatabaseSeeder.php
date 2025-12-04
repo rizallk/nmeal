@@ -23,6 +23,6 @@ class DatabaseSeeder extends Seeder
     $this->call('FoodSeeder');
     $this->call('FoodPickupSeeder');
 
-    $this->call('StudentFoodSeeder');
+    // $this->call('StudentFoodSeeder');
   }
 }

@@ -17,7 +17,22 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<?= $this->include('partials/greeting') ?>
+<div class="row">
+  <div class="col-md-8">
+    <?= $this->include('partials/greeting') ?>
+  </div>
+  <div class="col-md-4">
+    <div class="mb-4">
+      <button id="btnNotif" class="btn btn-outline-primary w-100 rounded d-flex align-items-center justify-content-center gap-2" onclick="handleNotificationClick()">
+        <div id="spinnerNotif" class="spinner-border spinner-border-sm d-none" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <i class="bi bi-bell-slash" id="iconNotif"></i>
+        <span id="textNotif">Aktifkan Notifikasi</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Header -->
 <a href="/food-activity" class="btn btn-primary-custom text-center rounded mb-4 w-100">
@@ -65,92 +80,13 @@
 <script src="<?= base_url('assets/js/getFormattedDate.js'); ?>"></script>
 
 <script>
-  const tipsContentSaved = localStorage.getItem('tips') ? JSON.parse(localStorage.getItem('tips')) : null;
-  const tipsHeader = document.getElementById('tipsHeader');
-  const tipsContent = document.getElementById('tipsContent');
-  const status = document.getElementById('status').value;
-  const catatan = document.getElementById('catatan').value;
-
-  if (tipsContentSaved?.status !== status || tipsContentSaved?.catatan !== catatan) {
-    localStorage.removeItem('tips')
-  }
-
-  if (getFormattedDate(new Date()) === tipsContentSaved?.date) {
-    tipsContent.innerHTML = `
-      <p class="fw-bold color mt-3">Tips Hari Ini</p>
-      ${tipsContentSaved?.content}
-    `
-    tipsHeader.innerHTML = `
-      <div class="card bg-color-2 border-0" id="tipsHeader">
-              <div class="card-body text-center">
-                <h6 class="card-title mb-0 fw-bold">Ayo dukung si kecil dengan tips berikut!</h6>
-              </div>
-            </div>
-    `
-  } else {
-    tipsHeader.innerHTML = `
-      <div class="card bg-color-2 border-0" id="btnRekomendasi" onclick="getRecommendation()" style="cursor: pointer">
-              <div class="card-body text-center">
-                <div class="d-flex justify-content-center align-items-center">
-                  <div class="spinner-border spinner-border-sm d-none" role="status" id="btnLoading">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                  <h6 class="card-title mb-0 fw-bold ms-2" id="btnText">Minta Rekomendasi Makanan ke AI</h6>
-                </div>
-              </div>
-            </div>
-    `
-  }
-
-  async function getRecommendation() {
-    const btn = document.getElementById('btnRekomendasi');
-    const btnText = document.getElementById('btnText');
-    const btnLoading = document.getElementById('btnLoading');
-
-    btn.classList.add('disabled');
-    btnText.textContent = "Sedang Menganalisis...";
-    btnLoading.classList.remove('d-none');
-
-    try {
-      const response = await fetch('<?= site_url('dashboard/recommendation') ?>', {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        tipsHeader.innerHTML = `
-          <div class="card bg-color-2 border-0" id="tipsHeader">
-                  <div class="card-body text-center">
-                    <h6 class="card-title mb-0 fw-bold">Ayo dukung si kecil dengan tips berikut!</h6>
-                  </div>
-                </div>
-        `
-        tipsContent.innerHTML = `
-          <p class="fw-bold color mt-3">Tips Hari Ini</p>
-          ${data.message}
-        `
-        localStorage.setItem('tips', JSON.stringify({
-          status,
-          catatan,
-          date: getFormattedDate(new Date()),
-          content: data.message
-        }))
-      } else {
-        tipsContent.innerHTML = `<div class="alert alert-danger">${data.message || 'Gagal memuat rekomendasi.'}</div>`;
-      }
-    } catch (error) {
-      console.error(error);
-      localStorage.removeItem('tips')
-      alert('Terjadi kesalahan jaringan.');
-    } finally {
-      btn.classList.remove('disabled');
-      btnText.textContent = "Lihat Rekomendasi";
-      btnLoading.classList.add('d-none');
-    }
-  }
+  const dashboardOrtuConfig = {
+    publicKeyUrl: '<?= site_url('notification/get-public-key') ?>',
+    subscribeUrl: '<?= site_url('notification/subscribe') ?>',
+    recommendationUrl: '<?= site_url('dashboard/recommendation') ?>'
+  };
 </script>
+
+<script src="<?= base_url('assets/js/pages/dashboard-ortu.js') ?>"></script>
 
 <?= $this->endSection() ?>

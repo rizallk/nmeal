@@ -128,3 +128,5 @@ _modules/*
 /node_modules
 
 (old)*.php
+(old)*.js
+(old)*.css

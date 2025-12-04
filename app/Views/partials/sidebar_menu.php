@@ -24,12 +24,12 @@ $currentPage = service('uri')->getSegment(1);
     <!-- Dashboard -->
     <li class="nav-item mb-2">
       <a href="/dashboard" class="nav-link rounded d-flex <?= ($currentPage == 'dashboard') ? 'active' : '' ?>">
-        <i class="bi bi-house-door-fill me-2"></i>
+        <i class="bi bi-speedometer me-2"></i>
         <span>Dashboard</span>
       </a>
     </li>
 
-    <!-- Pengambilan Makanan -->
+    <!-- Aktivitas Makan | Pengambilan Makanan -->
     <?php if (session()->get('userRole') === 'ortu'): ?>
       <li class="nav-item mb-2">
         <a href="/food-activity" class="nav-link rounded d-flex <?= ($currentPage == 'food-activity') ? 'active' : '' ?>">

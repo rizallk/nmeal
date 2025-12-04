@@ -108,7 +108,11 @@
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Data tidak dapat dikirim sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Data tidak dapat dikirim sekarang. Silakan periksa koneksi internet Anda.',
+          icon: 'info',
+        })
       }
     });
 

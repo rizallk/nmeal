@@ -12,11 +12,15 @@
         <div class="logo-wrapper d-flex justify-content-center align-items-center flex-column py-5">
           <img class="logo pb-5" src="<?= base_url('assets/images/logo.jpeg') ?>" alt="Logo" />
           <h3 style="font-weight: 700;"><?= getenv('SCHOOL_NAME') ?></h3>
+          <a class="d-flex d-md-none align-items-center flex-column text-decoration-none text-body" href="#login">
+            <div class="mt-3">Login</div>
+            <i class="bi bi-chevron-compact-down"></i>
+          </a>
         </div>
       </div>
       <div class="col-md content-column">
         <div class="content py-5 d-flex justify-content-center align-items-center">
-          <div class="box">
+          <div class="box" id="login">
             <h2 class="text-light text-center fw-bold">Selamat Datang</h2>
             <p class="text-secondary text-center mb-4">Masuk dengan akunmu</p>
             <?php if (session()->getFlashdata('error')): ?>

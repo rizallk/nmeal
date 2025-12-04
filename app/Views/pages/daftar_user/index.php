@@ -27,7 +27,7 @@
     </div>
   <?php endif; ?>
   <div class="header mb-1">
-    <form id="search-form" action="<?= site_url('daftar-user') ?>" method="get">
+    <form action="<?= site_url('daftar-user') ?>" method="get">
       <div class="row">
         <div class="col-md">
           <div class="row mb-3">
@@ -145,14 +145,11 @@
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda.");
-      }
-    });
-    document.getElementById('search-form').addEventListener('submit', function(event) {
-      if (!navigator.onLine) {
-        event.preventDefault();
-
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan pencarian sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda.',
+          icon: 'info',
+        })
       }
     });
 

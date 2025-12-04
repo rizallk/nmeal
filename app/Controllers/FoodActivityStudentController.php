@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Models\FoodModel;
 use App\Models\FoodPickupModel;
-use App\Models\StudentFoodModel;
 use App\Models\StudentModel;
 use App\Models\UserModel;
 
@@ -12,7 +11,6 @@ class FoodActivityStudentController extends BaseController
 {
   protected $studentModel;
   protected $foodModel;
-  protected $studentFoodModel;
   protected $userModel;
   protected $foodPickupModel;
   protected $userRole;
@@ -21,7 +19,6 @@ class FoodActivityStudentController extends BaseController
   {
     $this->studentModel = new StudentModel();
     $this->foodModel = new FoodModel();
-    $this->studentFoodModel = new StudentFoodModel();
     $this->userModel = new UserModel();
     $this->foodPickupModel = new FoodPickupModel();
     $this->userRole = session()->get('userRole');
@@ -48,8 +45,7 @@ class FoodActivityStudentController extends BaseController
 
     $query = $this->foodPickupModel->where('food_pickups.student_id', $studentData['id'])
       ->select('food_pickups.status, food_pickups.catatan, food_pickups.created_at, foods.name as menu_makanan')
-      ->join('student_foods', 'student_foods.student_id = food_pickups.student_id', 'left')
-      ->join('foods', 'foods.id = student_foods.food_id', 'left');
+      ->join('foods', 'foods.id = food_pickups.food_id', 'left');
 
     // Logika Search
     if (!empty($search)) {
