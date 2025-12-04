@@ -35,7 +35,7 @@ class NotificationController extends BaseController
   {
     // Generate keys di https://vapidkeys.com/
     return $this->response->setJSON([
-      'publicKey' => 'BNHQu8Oo9mQSFH-oS8NIJlALTkenlIWb0SerlB45_EB88Qj9Sg3EU9lCgtPGcJioJZAOMCJmIxWdwvwtBGib-hE'
+      'publicKey' => 'BCzIEsQck_jtfp5mcLsCa_39VFr67K64B3CgmCAL5-yViv6f6wcVvLnlnCPtiQ6TYbNHlYOhNGlzuUKnkh6sJLM'
     ]);
   }
 }

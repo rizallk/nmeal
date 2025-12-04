@@ -142,7 +142,7 @@ class DaftarSiswaController extends BaseController
     }
 
     if ($this->request->getPost('create_parent_account')) {
-      $password = $dataStudent['nis'] . '@' . $dataStudent['kelas'];
+      $password = $dataStudent['nis'] . '@ortu';
 
       $dataUser = [
         'nama_lengkap' => $dataStudent['nama_lengkap'],

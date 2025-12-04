@@ -81,9 +81,9 @@
           <small class="form-text text-muted">
             Username adalah NIS siswa.
             <br>
-            Default password : NIS siswa + @ + Kelas.
+            Default password : NIS siswa + @ + ortu.
             <br>
-            Contoh password : 1234581@3
+            Contoh password : 1234581@ortu
           </small>
           <div class="invalid-feedback">
             <?= $errors && isset($errors['username']) ? $errors['username'] : '' ?>

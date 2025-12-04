@@ -46,6 +46,7 @@ $isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === '
                   <option value="3" <?= $kelasFilter == '3' ? 'selected' : '' ?>>Kelas 3</option>
                   <option value="4" <?= $kelasFilter == '4' ? 'selected' : '' ?>>Kelas 4</option>
                   <option value="5" <?= $kelasFilter == '5' ? 'selected' : '' ?>>Kelas 5</option>
+                  <option value="6" <?= $kelasFilter == '6' ? 'selected' : '' ?>>Kelas 6</option>
                 </select>
                 <?php if (!empty($kelasFilter)): ?>
                   <a href="<?= clear_spesific_filter_helper('food-pickup', $currentFilters, 'kelas') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>

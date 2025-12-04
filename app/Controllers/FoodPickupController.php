@@ -314,7 +314,7 @@ class FoodPickupController extends BaseController
       log_message('error', 'CRITICAL: File openssl.cnf TIDAK DITEMUKAN di path: ' . $opensslPath);
       return; // Stop proses
     } else {
-      // log_message('info', 'SUCCESS: File openssl.cnf ditemukan.');
+      log_message('info', 'SUCCESS: File openssl.cnf ditemukan.');
     }
 
     putenv("OPENSSL_CONF=" . $opensslPath);
@@ -322,8 +322,8 @@ class FoodPickupController extends BaseController
     // Konfigurasi Web Push
     $auth = [
       'VAPID' => [
-        "subject" => "mailto:rizallkadamong@gmail.com",
-        "publicKey" => "BNHQu8Oo9mQSFH-oS8NIJlALTkenlIWb0SerlB45_EB88Qj9Sg3EU9lCgtPGcJioJZAOMCJmIxWdwvwtBGib-hE",
+        "subject" => "mailto:angelmayeri106@student.unsrat.ac.id",
+        "publicKey" => "BCzIEsQck_jtfp5mcLsCa_39VFr67K64B3CgmCAL5-yViv6f6wcVvLnlnCPtiQ6TYbNHlYOhNGlzuUKnkh6sJLM",
         "privateKey" => getenv('VAPID_PRIVATE_KEY')
       ],
     ];
@@ -362,15 +362,15 @@ class FoodPickupController extends BaseController
       // Eksekusi pengiriman
       foreach ($webPush->flush() as $report) {
         // Logging
-        // $endpoint = $report->getRequest()->getUri()->__toString();
+        $endpoint = $report->getRequest()->getUri()->__toString();
 
-        // if ($report->isSuccess()) {
-        //   // Info sukses (Opsional, kalau mau log penuh)
-        //   log_message('info', "[PUSH SUKSES] Dikirim ke: {$endpoint}");
-        // } else {
-        //   // Info Gagal (PENTING)
-        //   log_message('error', "[PUSH GAGAL] Pesan: {$report->getReason()} | Endpoint: {$endpoint}");
-        // }
+        if ($report->isSuccess()) {
+          // Info sukses (Opsional, kalau mau log penuh)
+          log_message('info', "[PUSH SUKSES] Dikirim ke: {$endpoint}");
+        } else {
+          // Info Gagal (PENTING)
+          log_message('error', "[PUSH GAGAL] Pesan: {$report->getReason()} | Endpoint: {$endpoint}");
+        }
       }
     } catch (\Exception $e) {
       log_message('error', 'Gagal inisialisasi WebPush: ' . $e->getMessage());
