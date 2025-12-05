@@ -2,25 +2,31 @@
 
 namespace App\Controllers;
 
+use App\Models\AllergenModel;
+use App\Models\FoodAllergenModel;
+use App\Models\FoodIngredientModel;
+use App\Models\IngredientModel;
 use App\Models\FoodModel;
-use App\Models\StudentFoodModel;
-use App\Models\StudentModel;
 use App\Models\UserModel;
 
 class DaftarMakananController extends BaseController
 {
-  protected $studentModel;
   protected $foodModel;
-  protected $studentFoodModel;
+  protected $allergenModel;
+  protected $foodAllergenModel;
+  protected $ingredientModel;
+  protected $foodIngredientModel;
   protected $userModel;
   protected $userRole;
 
   public function __construct()
   {
-    $this->studentModel = new StudentModel();
     $this->foodModel = new FoodModel();
-    $this->studentFoodModel = new StudentFoodModel();
     $this->userModel = new UserModel();
+    $this->allergenModel = new AllergenModel();
+    $this->foodAllergenModel = new FoodAllergenModel();
+    $this->ingredientModel = new IngredientModel();
+    $this->foodIngredientModel = new FoodIngredientModel();
     $this->userRole = session()->get('userRole');
   }
 
@@ -37,7 +43,13 @@ class DaftarMakananController extends BaseController
     // Dapatkan halaman saat ini dari URL, defaultnya adalah 1
     $currentPage = $this->request->getGet('page') ?? 1;
     $startNumber = ($currentPage - 1) * $perPage; // Logika numbering
-    $query = $this->foodModel;
+    $query = $this->foodModel
+      ->select('foods.*, GROUP_CONCAT(allergens.name SEPARATOR ", ") as allergens, GROUP_CONCAT(ingredients.name SEPARATOR ", ") as ingredients')
+      ->join('food_allergens', 'food_allergens.food_id = foods.id', 'left')
+      ->join('allergens', 'allergens.id = food_allergens.allergen_id', 'left')
+      ->join('food_ingredients', 'food_ingredients.food_id = foods.id', 'left')
+      ->join('ingredients', 'ingredients.id = food_ingredients.ingredient_id', 'left')
+      ->groupBy('foods.id');
 
     // Logika Search
     if (!empty($search)) {
@@ -63,7 +75,7 @@ class DaftarMakananController extends BaseController
     $data = [
       'pageTitle' => 'Daftar Makanan',
       'daftarMakanan' => $query->paginate($perPage, 'default', $currentPage),
-      'pager' => $this->studentModel->pager,
+      'pager' => $this->foodModel->pager,
       'search' => $search,
       'sortColumn' => $sortColumn,
       'sortOrder' => $sortOrder,
@@ -72,7 +84,7 @@ class DaftarMakananController extends BaseController
     ];
 
 
-    // $data['pager']->setPath('daftar-makanan', 'default');
+    $data['pager']->setPath('daftar-makanan', 'default');
 
 
     return view('pages/daftar_makanan/index', $data);
@@ -84,7 +96,8 @@ class DaftarMakananController extends BaseController
 
     $data = [
       'pageTitle' => 'Tambah Makanan',
-      'daftarMenuMakanan' => $this->foodModel->select('id, name')->findAll()
+      'allergens' => $this->allergenModel->select('id, name')->findAll(),
+      'ingredients' => $this->ingredientModel->select('id, name')->findAll()
     ];
 
     return view('pages/daftar_makanan/tambah', $data);
@@ -95,40 +108,60 @@ class DaftarMakananController extends BaseController
     $db = \Config\Database::connect(); // Instance database
     $db->transBegin();
 
-    $dataStudent = [
-      'nis' => $this->request->getPost('nis'),
-      'nama_lengkap' => $this->request->getPost('nama_lengkap'),
-      'kelas' => $this->request->getPost('kelas'),
+    $dataFood = [
+      'nama_makanan' => $this->request->getPost('nis'),
     ];
 
-    if (!$this->studentModel->save($dataStudent)) {
+    if (!$this->foodModel->save($dataFood)) {
       $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
+      return redirect()->back()->withInput()->with('validation', $this->foodModel->errors());
     }
 
-    $dataStudentFood = [
-      'student_id' => $this->studentModel->insertID(),
-      'food_id' => $this->request->getPost('menu_makanan')
-    ];
+    $foodId = $this->foodModel->getInsertID();
 
-    if (!$this->studentFoodModel->save($dataStudentFood)) {
-      $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentFoodModel->errors());
-    }
+    $allergens = $this->request->getPost('allergens');
 
-    if ($this->request->getPost('create_parent_account')) {
-      $password = $dataStudent['nis'] . '@' . $dataStudent['kelas'];
-
-      $dataUser = [
-        'nama_lengkap' => $dataStudent['nama_lengkap'],
-        'role' => 'ortu',
-        'username' => $dataStudent['nis'],
-        'password' => $password
+    foreach ($allergens as $allergenId) {
+      $dataAllergenBatch[] = [
+        'food_id'  => $foodId,
+        'allergen_id' => $allergenId
       ];
+    }
 
-      if (!$this->userModel->save($dataUser)) {
-        $db->transRollback();
-        return redirect()->back()->withInput()->with('validation', $this->userModel->errors());
+    if ($allergens && is_array($allergens)) {
+      $dataAllergenBatch = [];
+      foreach ($allergens as $allergenId) {
+        $dataAllergenBatch[] = [
+          'food_id'  => $foodId,
+          'allergen_id' => $allergenId
+        ];
+      }
+
+      if (!empty($dataAllergenBatch)) {
+        $this->foodAllergenModel->insertBatch($dataAllergenBatch);
+      }
+    }
+
+    $ingredients = $this->request->getPost('ingredients');
+
+    foreach ($ingredients as $ingredientId) {
+      $dataIngredientBatch[] = [
+        'food_id'  => $foodId,
+        'ingredient_id' => $ingredientId
+      ];
+    }
+
+    if ($ingredients && is_array($ingredients)) {
+      $dataIngredientBatch = [];
+      foreach ($ingredients as $ingredientId) {
+        $dataIngredientBatch[] = [
+          'food_id'  => $foodId,
+          'ingredient_id' => $ingredientId
+        ];
+      }
+
+      if (!empty($dataIngredientBatch)) {
+        $this->foodIngredientModel->insertBatch($dataIngredientBatch);
       }
     }
 
@@ -140,22 +173,24 @@ class DaftarMakananController extends BaseController
     // Komit (Simpan Permanen) jika semua berhasil
     $db->transCommit();
 
-    return redirect()->to('/tambah-makanan')->with('success', 'Tambah makanan "' . $this->request->getPost('nama_lengkap') . '" berhasil!');
+    return redirect()->to('/tambah-makanan')->with('success', 'Tambah makanan "' . $this->request->getPost('nama_makanan') . '" berhasil!');
   }
 
   public function edit(int $id)
   {
-    $makanan = $this->studentModel->find($id);
+    $makanan = $this->foodModel->find($id);
 
     if (!$makanan) {
-      return redirect()->back()->with('error', 'Makanan tidak ditemukan.');
+      return redirect()->back()->with('error', 'Nama makanan tidak ditemukan.');
     }
 
     $data = [
-      'pageTitle' => 'Edit Makanan - ' . $makanan['nama_lengkap'],
+      'pageTitle' => 'Edit makanan - ' . $makanan['nama_makanan'],
       'makanan'  => $makanan,
-      'menuMakananSelected' => $this->studentFoodModel->where('student_id', $id)->first(),
-      'daftarMenuMakanan' => $this->foodModel->select('id, name')->findAll()
+      'allergens' => $this->allergenModel->select('id, name')->findAll(),
+      'foodAllergens' => $this->foodAllergenModel->where('food_id', $id)->findAll(),
+      'ingredients' => $this->ingredientModel->select('id, name')->findAll(),
+      'foodIngredients' => $this->foodIngredientModel->where('food_id', $id)->findAll()
     ];
 
     return view('pages/daftar_makanan/edit', $data);
@@ -163,64 +198,59 @@ class DaftarMakananController extends BaseController
 
   public function update(int $id)
   {
-    $makanan = $this->studentModel->find($id);
+    $makanan = $this->foodModel->find($id);
 
     if (!$makanan) {
-      return redirect()->back()->with('error', 'Makanan tidak ditemukan.');
+      return redirect()->back()->with('error', 'Nama Makanan tidak ditemukan.');
     }
 
     $db = \Config\Database::connect(); // Instance database
     $db->transBegin();
 
-    // Data Student
-    $dataStudent = [
+    // Data Food
+    $dataFood = [
       'id' => $id,
-      'nis' => $this->request->getPost('nis'),
-      'nama_lengkap' => $this->request->getPost('nama_lengkap'),
-      'kelas' => $this->request->getPost('kelas'),
+      'nama_makanan' => $this->request->getPost('nama_makanan'),
     ];
 
-    if (!$this->studentModel->save($dataStudent)) {
+    if (!$this->foodModel->save($dataFood)) {
       $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentModel->errors());
+      return redirect()->back()->withInput()->with('validation', $this->foodModel->errors());
     }
 
-    // Data Student Food
-    $newFoodId = $this->request->getPost('menu_makanan');
-    $dataStudentFood = [
-      'student_id' => $id,
-      'food_id'    => $newFoodId
-    ];
+    // Data alergen makanan
+    $this->foodAllergenModel->where('food_id', $id)->delete();
+    $allergens = $this->request->getPost('allergens');
 
-    if (!$this->studentFoodModel->validate($dataStudentFood)) {
-      $db->transRollback();
-      return redirect()->back()->withInput()->with('validation', $this->studentFoodModel->errors());
+    if ($allergens && is_array($allergens)) {
+      $dataAllergenBatch = [];
+      foreach ($allergens as $allergenId) {
+        $dataAllergenBatch[] = [
+          'food_id'  => $id,
+          'allergen_id' => $allergenId
+        ];
+      }
+
+      if (!empty($dataAllergenBatch)) {
+        $this->foodAllergenModel->insertBatch($dataAllergenBatch);
+      }
     }
 
-    $existingData = $this->studentFoodModel->where('student_id', $id)->first();
-    if ($existingData) {
-      $this->studentFoodModel
-        ->where('student_id', $id)
-        ->set(['food_id' => $newFoodId])
-        ->update();
-    } else {
-      $this->studentFoodModel->insert($dataStudentFood);
-    }
+    $this->foodIngredientModel->where('food_id', $id)->delete();
+    $ingredients = $this->request->getPost('ingredients');
 
-    // Data User
-    $dataUser = [
-      'nama_lengkap' => $dataStudent['nama_lengkap'],
-      'username' => $dataStudent['nis'],
-      'password' => $dataStudent['nis'] . '@' . $dataStudent['kelas']
-    ];
-    $oldNIS = $this->request->getPost('old_nis');
+    if ($ingredients && is_array($ingredients)) {
+      $dataIngredientBatch = [];
+      foreach ($ingredients as $ingredientId) {
+        $dataIngredientBatch[] = [
+          'food_id'  => $id,
+          'ingredient_id' => $ingredientId
+        ];
+      }
 
-    $existingData = $this->userModel->where('username', $oldNIS)->first();
-    if ($existingData) {
-      $this->userModel
-        ->where('username', $oldNIS)
-        ->set($dataUser)
-        ->update();
+      if (!empty($dataIngredientBatch)) {
+        $this->foodIngredientModel->insertBatch($dataIngredientBatch);
+      }
     }
 
     // ===============================
@@ -233,7 +263,7 @@ class DaftarMakananController extends BaseController
     // Komit (Simpan Permanen) jika semua berhasil
     $db->transCommit();
 
-    $namaUpdated = $this->request->getPost('nama_lengkap');
+    $namaUpdated = $this->request->getPost('nama_makanan');
 
     return redirect()->back()->with('success', 'Makanan "' . esc($namaUpdated) . '" berhasil diupdate.');
   }
@@ -247,18 +277,13 @@ class DaftarMakananController extends BaseController
     $db = \Config\Database::connect(); // Instance database
     $db->transBegin();
 
-    $makanan = $this->studentModel->find($id);
+    $makanan = $this->foodModel->find($id);
 
     if (!$makanan) {
       return redirect()->back()->with('error', 'makanan tidak ditemukan.');
     }
 
-    $this->studentModel->delete($id);
-
-    $user = $this->userModel->where('username', $makanan['nis'])->first();
-    if ($user) {
-      $this->userModel->where('username', $makanan['nis'])->delete();
-    }
+    $this->foodModel->delete($id);
 
     if ($db->transStatus() === false) {
       $db->transRollback();
@@ -268,6 +293,6 @@ class DaftarMakananController extends BaseController
     // Komit (Simpan Permanen) jika semua berhasil
     $db->transCommit();
 
-    return redirect()->back()->with('success', 'Makanan "' . esc($makanan['nama_lengkap']) . '" berhasil dihapus.');
+    return redirect()->back()->with('success', 'Makanan "' . esc($makanan['nama_makanan']) . '" berhasil dihapus.');
   }
 }

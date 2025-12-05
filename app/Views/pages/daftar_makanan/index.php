@@ -57,6 +57,11 @@
               Bahan Makanan <?= getSortIcon('bahan_makanan', $sortColumn, $sortOrder) ?>
             </a>
           </th>
+          <th>
+            <a href="<?= buildSortLink('daftar-makanan', 'alergen_makanan', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
+              Alergen Makanan <?= getSortIcon('alergen_makanan', $sortColumn, $sortOrder) ?>
+            </a>
+          </th>
           <th class="text-center action">Aksi</th>
         </tr>
       </thead>
@@ -67,6 +72,8 @@
             <tr>
               <td><?= ++$no ?></td>
               <td><?= esc($makanan['name']) ?></td>
+              <td><?= esc($makanan['ingredients']) ?></td>
+              <td><?= esc($makanan['allergens']) ?></td>
               <td class="text-center">
                 <a href="<?= site_url('edit-makanan/' . $makanan['id']) ?>" class="text-warning me-2">Edit</a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-makanan-id="<?= $makanan['id'] ?>" data-makanan-name="<?= esc($makanan['name']) ?>" title="Hapus Makanan" class="text-danger">Hapus</a>
