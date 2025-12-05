@@ -180,6 +180,7 @@ class DaftarSiswaController extends BaseController
       'pageTitle' => 'Edit Siswa - ' . $siswa['nama_lengkap'],
       'siswa'  => $siswa,
       'allergens' => $this->allergenModel->select('id, name')->findAll(),
+
       'studentAllergens' => $this->studentAllergenModel->where('student_id', $id)->findAll()
     ];
 

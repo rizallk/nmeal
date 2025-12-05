@@ -1,6 +1,5 @@
 <?= $this->extend('layouts/dashboard') ?>
 
-
 <?= $this->section('styles') ?>
 <style>
   .admin .foto {
@@ -62,5 +61,85 @@
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-4">
+      <canvas id="studentsChart"></canvas>
+    </div>
+    <div class="col-md-8">
+      <canvas id="studentAllergensChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const studentAllergensChart = document.getElementById('studentAllergensChart');
+    const studentsChart = document.getElementById('studentsChart');
+
+    new Chart(studentsChart, {
+      type: 'pie',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          data: [12, 19, 3, 5, 2, 3],
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Jumlah Siswa yang memiliki Alergi'
+          }
+        }
+      },
+    });
+
+    new Chart(studentAllergensChart, {
+      type: 'bar',
+      data: {
+        labels: ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.5)', // Merah
+            'rgba(54, 162, 235, 0.5)', // Biru
+            'rgba(255, 206, 86, 0.5)', // Kuning
+            'rgba(75, 192, 192, 0.5)', // Hijau
+            'rgba(153, 102, 255, 0.5)', // Ungu
+            'rgba(255, 159, 64, 0.5)' // Jingga
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Jumlah Siswa Per-Kelas'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
 </div>
 <?= $this->endSection() ?>

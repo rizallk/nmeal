@@ -30,6 +30,7 @@
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
     // Script untuk mendaftarkan Service Worker (PWA)
@@ -53,8 +54,6 @@
     <?= $this->renderSection('content-wrapper') ?>
   </main>
 
-  <!-- Javascript -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>
