@@ -53,7 +53,8 @@
     <?= $this->renderSection('content-wrapper') ?>
   </main>
 
-  <script src="<?= base_url('assets/js/main.js') ?>"></script>
+  <!-- Javascript -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 
 </html>

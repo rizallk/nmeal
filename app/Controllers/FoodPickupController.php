@@ -249,17 +249,19 @@ class FoodPickupController extends BaseController
         }
       }
 
-      if (!empty($insert_data)) $this->foodPickupModel->insertBatch($insert_data);
+      if (!empty($insert_data)) {
+        $this->foodPickupModel->insertBatch($insert_data);
+
+        // Kirim notifikasi ketika pertama kali insert data
+        if (!empty($studentsToNotify)) {
+          $this->sendPushNotifications($studentsToNotify);
+        }
+      }
       if (!empty($update_data)) $this->foodPickupModel->updateBatch($update_data, 'id');
       if (!empty($ids_to_delete)) $this->foodPickupModel->delete($ids_to_delete);
 
       // Menyimpan ke database
       $this->foodPickupModel->db->transCommit();
-
-      // Kirim notifikasi
-      if (!empty($studentsToNotify)) {
-        $this->sendPushNotifications($studentsToNotify);
-      }
 
       $successMsg = 'Data berhasil disimpan.';
 

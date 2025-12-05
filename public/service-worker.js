@@ -10,7 +10,6 @@ const appShellFiles = [
   '/assets/js/pages/food-pickup.js',
   '/assets/js/getFormattedDate.js',
   '/assets/js/offlineSync.js',
-  '/assets/js/main.js',
   // CSS Files
   '/assets/css/components/sidebar_menu.css',
   '/assets/css/components/topbar.css',
@@ -30,6 +29,7 @@ const appShellFiles = [
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
   'https://cdn.jsdelivr.net/npm/sweetalert2@11',
+  'https://cdn.jsdelivr.net/npm/chart.js',
 ];
 
 // Event: Install
