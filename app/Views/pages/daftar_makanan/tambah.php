@@ -26,10 +26,10 @@
     <div class="row">
       <div class="col-md-6">
         <div class="mb-3">
-          <label for="nama_makanan" class="form-label">Nama makanan<span class="text-danger">*</span></label>
-          <input type="text" name="nama_makanan" class="form-control <?= $errors && isset($errors['nama_makanan']) ? 'is-invalid' : '' ?>" id="nama_makanan" placeholder="Nama Makanan" value="<?= old('nama_makanan') ?>" required>
+          <label for="name" class="form-label">Nama makanan<span class="text-danger">*</span></label>
+          <input type="text" name="name" class="form-control <?= $errors && isset($errors['name']) ? 'is-invalid' : '' ?>" id="name" placeholder="Nama Makanan" value="<?= old('name') ?>" required>
           <div class="invalid-feedback">
-            <?= $errors && isset($errors['nama_makanan']) ? $errors['nama_makanan'] : '' ?>
+            <?= $errors && isset($errors['name']) ? $errors['name'] : '' ?>
           </div>
         </div>
         <div class="card-legend">
@@ -114,15 +114,15 @@
       const selectAllergen = document.getElementById('select-allergen');
       const allergenList = document.getElementById('allergen-list');
       const allergenInputs = document.getElementById('allergen-inputs');
-      const errorMsg = document.getElementById('allergen-error');
-      const emptyMsg = document.querySelector('.allergen-empty-msg');
+      const allergenErrorMsg = document.getElementById('allergen-error');
+      const allergenEmptyMsg = document.querySelector('.allergen-empty-msg');
 
       let selectedAllergens = [];
 
       function addAllergenToUi(id, text) {
         if (selectedAllergens.includes(id)) return;
 
-        if (emptyMsg) emptyMsg.style.display = 'none';
+        if (allergenEmptyMsg) allergenEmptyMsg.style.display = 'none';
 
         selectedAllergens.push(id);
 
@@ -160,8 +160,8 @@
         if (!id) return;
 
         if (selectedAllergens.includes(id)) {
-          errorMsg.classList.remove('d-none');
-          setTimeout(() => errorMsg.classList.add('d-none'), 2000);
+          allergenErrorMsg.classList.remove('d-none');
+          setTimeout(() => allergenErrorMsg.classList.add('d-none'), 2000);
           return;
         }
 
@@ -184,8 +184,8 @@
 
           li.remove();
 
-          if (selectedAllergens.length === 0 && emptyMsg) {
-            emptyMsg.style.display = 'block';
+          if (selectedAllergens.length === 0 && allergenEmptyMsg) {
+            allergenEmptyMsg.style.display = 'block';
           }
         }
       });
@@ -196,15 +196,15 @@
       const selectIngredient = document.getElementById('select-ingredient');
       const ingredientList = document.getElementById('ingredient-list');
       const ingredientInputs = document.getElementById('ingredient-inputs');
-      const errorMsg = document.getElementById('ingredient-error');
-      const emptyMsg = document.querySelector('.ingredient-empty-msg');
+      const ingredientErrorMsg = document.getElementById('ingredient-error');
+      const ingredientEmptyMsg = document.querySelector('.ingredient-empty-msg');
 
       let selectedIngredients = [];
 
       function addIngredientToUi(id, text) {
         if (selectedIngredients.includes(id)) return;
 
-        if (emptyMsg) emptyMsg.style.display = 'none';
+        if (ingredientEmptyMsg) ingredientEmptyMsg.style.display = 'none';
 
         selectedIngredients.push(id);
 
@@ -242,8 +242,8 @@
         if (!id) return;
 
         if (selectedIngredients.includes(id)) {
-          errorMsg.classList.remove('d-none');
-          setTimeout(() => errorMsg.classList.add('d-none'), 2000);
+          ingredientErrorMsg.classList.remove('d-none');
+          setTimeout(() => ingredientErrorMsg.classList.add('d-none'), 2000);
           return;
         }
 

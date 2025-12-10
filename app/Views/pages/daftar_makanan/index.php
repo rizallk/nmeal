@@ -9,6 +9,42 @@
   .daftar-makanan .table tr td {
     white-space: nowrap;
   }
+
+  .daftar-makanan .table th.ingredient {
+    width: 350px;
+  }
+
+  .daftar-makanan .table td.ingredient {
+    position: relative;
+    max-width: 350px;
+    vertical-align: middle;
+  }
+
+  .daftar-makanan .table td.ingredient span {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .daftar-makanan .table th.allergen {
+    width: 350px;
+  }
+
+  .daftar-makanan .table td.allergen {
+    position: relative;
+    max-width: 350px;
+    vertical-align: middle;
+  }
+
+  .daftar-makanan .table td.allergen span {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>
 <?= $this->endSection() ?>
 
@@ -32,8 +68,8 @@
         <div class="col-md">
           <div class="input-group input-group mb-3">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control" name="search" value="<?= esc($search) ?>" placeholder="Cari nama atau yang lain..." <?= empty($kelasFilter) ? 'disabled' : '' ?>>
-            <button class="btn btn-success" type="submit" <?= empty($kelasFilter) ? 'disabled' : '' ?>>Cari</button>
+            <input type="search" class="form-control" name="search" value="<?= esc($search) ?>" placeholder="Cari nama atau yang lain...">
+            <button class="btn btn-success" type="submit">Cari</button>
             <?php if (!empty($search)): ?>
               <a href="<?= clear_spesific_filter_helper('daftar-makanan', $currentFilters, 'search') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
             <?php endif; ?>
@@ -72,8 +108,20 @@
             <tr>
               <td><?= ++$no ?></td>
               <td><?= esc($makanan['name']) ?></td>
-              <td><?= esc($makanan['ingredients']) ?></td>
-              <td><?= esc($makanan['allergens']) ?></td>
+              <td class="ingredient"
+                <?php if (!empty($makanan['ingredients'])) : ?>
+                data-bs-toggle="tooltip"
+                data-bs-title="<?= esc($makanan['ingredients']) ?>"
+                <?php endif; ?>>
+                <span><?= esc($makanan['ingredients']) ?></span>
+              </td>
+              <td class="allergen"
+                <?php if (!empty($makanan['allergens'])) : ?>
+                data-bs-toggle="tooltip"
+                data-bs-title="<?= esc($makanan['allergens']) ?>"
+                <?php endif; ?>>
+                <span><?= esc($makanan['allergens']) ?></span>
+              </td>
               <td class="text-center">
                 <a href="<?= site_url('edit-makanan/' . $makanan['id']) ?>" class="text-warning me-2">Edit</a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-makanan-id="<?= $makanan['id'] ?>" data-makanan-name="<?= esc($makanan['name']) ?>" title="Hapus Makanan" class="text-danger">Hapus</a>
@@ -89,6 +137,9 @@
     </table>
   </div>
 
+  <div class="d-flex justify-content-center mt-3">
+    <?= $pager->links('default', 'pagination') ?>
+  </div>
 
   <!-- Modal Konfirmasi Hapus -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -151,6 +202,9 @@
         });
       }
     });
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
 </div>
 <?= $this->endSection() ?>

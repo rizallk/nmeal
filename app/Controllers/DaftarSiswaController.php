@@ -120,14 +120,7 @@ class DaftarSiswaController extends BaseController
 
     $allergens = $this->request->getPost('allergens');
 
-    foreach ($allergens as $allergenId) {
-      $dataAllergenBatch[] = [
-        'student_id'  => $studentId,
-        'allergen_id' => $allergenId
-      ];
-    }
-
-    if ($allergens && is_array($allergens)) {
+    if (!empty($allergens) && is_array($allergens)) {
       $dataAllergenBatch = [];
       foreach ($allergens as $allergenId) {
         $dataAllergenBatch[] = [
@@ -135,7 +128,6 @@ class DaftarSiswaController extends BaseController
           'allergen_id' => $allergenId
         ];
       }
-
       if (!empty($dataAllergenBatch)) {
         $this->studentAllergenModel->insertBatch($dataAllergenBatch);
       }
@@ -180,7 +172,6 @@ class DaftarSiswaController extends BaseController
       'pageTitle' => 'Edit Siswa - ' . $siswa['nama_lengkap'],
       'siswa'  => $siswa,
       'allergens' => $this->allergenModel->select('id, name')->findAll(),
-
       'studentAllergens' => $this->studentAllergenModel->where('student_id', $id)->findAll()
     ];
 
