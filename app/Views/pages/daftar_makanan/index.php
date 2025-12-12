@@ -169,14 +169,22 @@
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Tidak dapat melakukan operasi hapus sekarang. Silakan periksa koneksi internet Anda.',
+          icon: 'info',
+        })
       }
     });
     document.getElementById('search-form').addEventListener('submit', function(event) {
       if (!navigator.onLine) {
         event.preventDefault();
 
-        alert("KONEKSI INTERNET TERPUTUS!\n\nAnda sedang offline. Tidak dapat melakukan pencarian sekarang. Silakan periksa koneksi internet Anda.");
+        Swal.fire({
+          title: 'Koneksi Internet Terputus!',
+          text: 'Anda sedang offline. Tidak dapat melakukan pencarian sekarang. Silakan periksa koneksi internet Anda.',
+          icon: 'info',
+        })
       }
     });
 

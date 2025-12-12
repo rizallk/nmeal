@@ -1,13 +1,15 @@
 function initFoodPickupPage(config) {
   const { csrfTokenName, operatorName, getAllergensUrlPath } = config;
 
-  // ==========================================
-  // LOGIKA UI (MODAL & CHECKBOX)
-  // ==========================================
   const detailModalEl = document.getElementById('detailModal');
   const detailModal = detailModalEl ? new bootstrap.Modal(detailModalEl) : null;
   const btnSet = document.getElementById('btnSet');
   const btnFinalSubmit = document.getElementById('btnFinalSubmit');
+
+  let currentStudentAllergens = [];
+  const allergenWarning = document.getElementById('allergenWarning');
+  const conflictAllergensSpan = document.getElementById('conflictAllergens');
+  const modalFoodSelect = document.getElementById('modalFoodId');
 
   function updateStatusUI(studentId, isChecked) {
     const badge = document.getElementById('status_badge_' + studentId);
@@ -24,11 +26,49 @@ function initFoodPickupPage(config) {
     }
   }
 
+  function checkAllergyConflict() {
+    if (!allergenWarning || !conflictAllergensSpan || !modalFoodSelect) return;
+
+    allergenWarning.classList.add('d-none');
+    conflictAllergensSpan.textContent = '';
+
+    const selectedOption =
+      modalFoodSelect.options[modalFoodSelect.selectedIndex];
+    const foodAllergensRaw = selectedOption
+      ? selectedOption.getAttribute('data-allergens')
+      : '';
+
+    if (!foodAllergensRaw || currentStudentAllergens.length === 0) return;
+
+    const foodAllergens = foodAllergensRaw
+      .split(',')
+      .map((s) => s.trim().toLowerCase());
+
+    const conflicts = foodAllergens.filter((allergen) =>
+      currentStudentAllergens.includes(allergen)
+    );
+
+    if (conflicts.length > 0) {
+      const formattedConflicts = conflicts
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(', ');
+      conflictAllergensSpan.textContent = formattedConflicts;
+      allergenWarning.classList.remove('d-none');
+    }
+  }
+
+  if (modalFoodSelect) {
+    modalFoodSelect.addEventListener('change', checkAllergyConflict);
+  }
+
   async function openModalFromRow(tr) {
     const id = tr.dataset.studentId;
     const name = tr.dataset.studentName;
     const currentFoodId = document.getElementById('input_food_id_' + id).value;
     const currentNote = document.getElementById('input_catatan_' + id).value;
+
+    currentStudentAllergens = [];
+    if (allergenWarning) allergenWarning.classList.add('d-none');
 
     document.getElementById('modalStudentId').value = id;
     document.getElementById('modalStudentName').textContent = name;
@@ -60,6 +100,9 @@ function initFoodPickupPage(config) {
           alergenList.innerHTML = '';
 
           if (data && data.length > 0) {
+            currentStudentAllergens = data.map((item) =>
+              item.name.toLowerCase()
+            );
             data.forEach((item) => {
               const li = document.createElement('li');
               li.innerHTML = item.name;
@@ -72,6 +115,8 @@ function initFoodPickupPage(config) {
                 </div>
             `;
           }
+
+          checkAllergyConflict();
         } catch (error) {
           console.error('Error fetching allergens:', error);
           alergenList.innerHTML = `
@@ -284,7 +329,6 @@ function initFoodPickupPage(config) {
         const idMatch = input.name.match(/\[(.*?)\]/);
         if (idMatch) {
           const id = idMatch[1];
-          // KUNCI UTAMA: Cek apakah ID ini ada di daftar yang dicentang?
           if (checkedStudentIds.includes(id)) {
             objectData.catatan[id] = input.value;
           }
@@ -294,7 +338,6 @@ function initFoodPickupPage(config) {
         const idMatch = input.name.match(/\[(.*?)\]/);
         if (idMatch) {
           const id = idMatch[1];
-          // KUNCI UTAMA: Cek apakah ID ini ada di daftar yang dicentang?
           if (checkedStudentIds.includes(id)) {
             objectData.food_ids[id] = input.value;
           }

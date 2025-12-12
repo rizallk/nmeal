@@ -95,6 +95,13 @@ class FoodPickupController extends BaseController
       'sort-order' => $sortOrder
     ];
 
+    $menuMakananWithAllergens = $this->foodModel
+      ->select('foods.id, foods.name, GROUP_CONCAT(allergens.name) as food_allergens')
+      ->join('food_allergens', 'food_allergens.food_id = foods.id', 'left')
+      ->join('allergens', 'allergens.id = food_allergens.allergen_id', 'left')
+      ->groupBy('foods.id')
+      ->findAll();
+
     $data = [
       'pageTitle' => 'Pengambilan Makanan',
       'data' => $resultData,
@@ -105,7 +112,7 @@ class FoodPickupController extends BaseController
       'sortOrder' => $sortOrder,
       'currentFilters' => array_filter($currentFilters),
       'isEditable' => $isEditable,
-      'daftarMenuMakanan' => $this->foodModel->select('id, name')->findAll()
+      'daftarMenuMakanan' => $menuMakananWithAllergens
     ];
 
     return view('pages/food_pickup/index', $data);

@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('formatTanggalIndo')) {
-  function formatTanggalIndo($tanggal = null)
+  function formatTanggalIndo($tanggal = null, $singkat = false)
   {
 
     $timestamp = ($tanggal === null) ? time() : strtotime($tanggal);
@@ -21,9 +21,26 @@ if (!function_exists('formatTanggalIndo')) {
       12 => 'Desember'
     ];
 
+    $nama_bulan_singkat = [
+      1 => 'Jan',
+      2 => 'Feb',
+      3 => 'Mar',
+      4 => 'Apr',
+      5 => 'Mei',
+      6 => 'Jun',
+      7 => 'Jul',
+      8 => 'Agu',
+      9 => 'Sep',
+      10 => 'Okt',
+      11 => 'Nov',
+      12 => 'Des'
+    ];
+
     $hari = date('j', $timestamp);
-    $bulan = $nama_bulan[(int)date('n', $timestamp)];
+    $bulanIndex = (int)date('n', $timestamp);
     $tahun = date('Y', $timestamp);
+
+    $bulan = ($singkat) ? $nama_bulan_singkat[$bulanIndex] : $nama_bulan[$bulanIndex];
 
     return $hari . ' ' . $bulan . ' ' . $tahun;
   }

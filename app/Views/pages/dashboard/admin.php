@@ -47,7 +47,7 @@
     <div class="col-md-6">
       <div class="card primary-color-bg text-white mb-3">
         <div class="card-body text-center">
-          <h1 class="card-title fw-bold">110</h1>
+          <h1 class="card-title fw-bold"><?= $totalSudahMakan ?? 0 ?></h1>
           <p class="card-text">Jumlah Siswa Sudah Terima Makanan Hari Ini</p>
         </div>
       </div>
@@ -55,7 +55,7 @@
     <div class="col-md-6">
       <div class="card accent-color-bg text-white mb-3">
         <div class="card-body text-center">
-          <h1 class="card-title fw-bold">34</h1>
+          <h1 class="card-title fw-bold"><?= $totalBelumMakan ?? 0 ?></h1>
           <p class="card-text">Jumlah Siswa Belum Terima Makanan Hari Ini</p>
         </div>
       </div>
@@ -63,10 +63,10 @@
   </div>
   <div class="row">
     <div class="col-md-4">
-      <canvas id="studentsChart"></canvas>
+      <canvas id="studentAllergensChart"></canvas>
     </div>
     <div class="col-md-8">
-      <canvas id="studentAllergensChart"></canvas>
+      <canvas id="studentsChart"></canvas>
     </div>
   </div>
 
@@ -74,68 +74,112 @@
     const studentAllergensChart = document.getElementById('studentAllergensChart');
     const studentsChart = document.getElementById('studentsChart');
 
-    new Chart(studentsChart, {
+    new Chart(studentAllergensChart, {
       type: 'pie',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: <?= $studentAllergenChart['labels'] ?>,
         datasets: [{
-          data: [12, 19, 3, 5, 2, 3],
+          label: ' Jumlah Siswa',
+          data: <?= $studentAllergenChart['data'] ?>,
         }]
       },
+      plugins: [ChartDataLabels],
       options: {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
+            position: 'bottom',
           },
           title: {
             display: true,
-            text: 'Jumlah Siswa yang memiliki Alergi'
+            text: 'Distribusi Jenis Alergi Siswa',
+            font: {
+              size: 14,
+            }
+          },
+          // Format tampilan data angka pada chart
+          datalabels: {
+            color: '#fff',
+            font: {
+              weight: 'bold',
+              size: 12
+            },
+            formatter: (value, ctx) => {
+              let sum = 0;
+              let dataArr = ctx.chart.data.datasets[0].data;
+
+              // PERBAIKAN DI SINI: Gunakan Number() atau parseFloat()
+              dataArr.map(data => {
+                sum += Number(data); // Memaksa string "5" menjadi angka 5
+              });
+
+              // Mencegah pembagian dengan nol
+              if (sum === 0) return "0%";
+
+              let percentage = (value * 100 / sum).toFixed(1) + "%";
+              return percentage;
+            }
           }
         }
       },
     });
 
-    new Chart(studentAllergensChart, {
-      type: 'bar',
+    new Chart(studentsChart, {
+      type: 'line',
       data: {
-        labels: ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'],
+        labels: <?= $classChart['labels'] ?>,
         datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.5)', // Merah
-            'rgba(54, 162, 235, 0.5)', // Biru
-            'rgba(255, 206, 86, 0.5)', // Kuning
-            'rgba(75, 192, 192, 0.5)', // Hijau
-            'rgba(153, 102, 255, 0.5)', // Ungu
-            'rgba(255, 159, 64, 0.5)' // Jingga
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-          ],
-          borderWidth: 1
+          label: ' Jumlah Siswa',
+          data: <?= $classChart['data'] ?>,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 2,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: 'rgba(54, 162, 235, 1)',
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          fill: true,
+          tension: 0.4
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
+            display: false
           },
           title: {
             display: true,
-            text: 'Jumlah Siswa Per-Kelas'
+            text: 'Tren Pengambilan Makanan (30 Hari Terakhir)',
+            font: {
+              size: 14,
+            }
+          },
+          datalabels: {
+            display: false
           }
         },
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Jumlah Siswa'
+            },
+            ticks: {
+              stepSize: 1
+            },
+            grid: {
+              borderDash: [5, 5]
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              maxTicksLimit: 10
+            }
           }
         }
       }

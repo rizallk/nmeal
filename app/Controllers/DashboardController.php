@@ -3,28 +3,117 @@
 namespace App\Controllers;
 
 use App\Libraries\GeminiAI;
+use App\Models\AllergenModel;
 use App\Models\FoodPickupModel;
+use App\Models\StudentAllergenModel;
+use App\Models\StudentModel;
 
 class DashboardController extends BaseController
 {
     protected $userRole;
-    protected $foodPickupModel;
     protected $studentId;
+    protected $foodPickupModel;
+    protected $studentModel;
+    protected $studentAllergenModel;
+    protected $allergenModel;
 
     public function __construct()
     {
         $this->userRole = session()->get('userRole');
         $this->studentId = session()->get('studentId');
         $this->foodPickupModel = new FoodPickupModel();
+        $this->studentModel = new StudentModel();
+        $this->studentAllergenModel = new StudentAllergenModel();
+        $this->allergenModel = new AllergenModel();
     }
 
-    public function index(): string
+    public function index()
     {
         $data = [
             'pageTitle' => 'Dashboard',
         ];
 
         if ($this->userRole == 'admin' || $this->userRole == 'guru') {
+            // $weeklyData = [];
+            $monthlyData = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime("-$i days"));
+                $monthlyData[$date] = 0;
+            }
+
+            $startDate = date('Y-m-d', strtotime('-29 days'));
+            $endDate   = date('Y-m-d');
+
+            $queryResult = $this->foodPickupModel
+                ->select('DATE(created_at) as tgl, COUNT(*) as total')
+                ->where('DATE(created_at) >=', $startDate)
+                ->where('DATE(created_at) <=', $endDate)
+                ->groupBy('DATE(created_at)')
+                ->orderBy('tgl', 'ASC')
+                ->findAll();
+
+            foreach ($queryResult as $row) {
+                if (isset($monthlyData[$row['tgl']])) {
+                    $monthlyData[$row['tgl']] = (int) $row['total'];
+                }
+            }
+
+            $chartLabels = [];
+            $chartValues = [];
+
+            $bulanIndo = [
+                '01' => 'Jan',
+                '02' => 'Feb',
+                '03' => 'Mar',
+                '04' => 'Apr',
+                '05' => 'Mei',
+                '06' => 'Jun',
+                '07' => 'Jul',
+                '08' => 'Agu',
+                '09' => 'Sep',
+                '10' => 'Okt',
+                '11' => 'Nov',
+                '12' => 'Des'
+            ];
+
+            foreach ($monthlyData as $date => $total) {
+                $time = strtotime($date);
+                $tgl = date('d', $time);
+                $bln = date('m', $time);
+                $chartLabels[] = $tgl . ' ' . $bulanIndo[$bln];
+                $chartValues[] = $total;
+            }
+
+            $data['classChart'] = [
+                'labels' => json_encode($chartLabels),
+                'data'   => json_encode($chartValues)
+            ];
+
+            $studentAllergens = $this->studentAllergenModel
+                ->select('allergens.name as allergen_name, COUNT(*) as total_students')
+                ->join('allergens', 'allergens.id = student_allergens.allergen_id')
+                ->groupBy('allergen_id')
+                ->orderBy('total_students', 'DESC')
+                ->findAll();
+
+            $allergenLabels = [];
+            $allergenValues = [];
+
+            foreach ($studentAllergens as $row) {
+                $allergenLabels[] = $row['allergen_name'];
+                $allergenValues[] = (int) $row['total_students'];
+            }
+
+            $data['studentAllergenChart'] = [
+                'labels' => json_encode($allergenLabels),
+                'data'   => json_encode($allergenValues)
+            ];
+
+            $today = date('Y-m-d');
+            $data['totalSudahMakan'] = $this->foodPickupModel->where('DATE(created_at)', $today)->countAllResults();
+            $totalSiswa = $this->studentModel->countAllResults();
+            $data['totalBelumMakan'] = $totalSiswa - $data['totalSudahMakan'];
+
             return view('pages/dashboard/admin', $data);
         } else if ($this->userRole == 'ortu') {
             $pickup = $this->foodPickupModel
@@ -37,8 +126,6 @@ class DashboardController extends BaseController
 
             return view('pages/dashboard/ortu', $data);
         }
-
-        return '';
     }
 
     public function getRecommendation()

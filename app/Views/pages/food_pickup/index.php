@@ -14,7 +14,7 @@ $date = new IntlDateFormatter(
 
 $now = $date->format(time());
 $dayFilter = date('l', strtotime($tanggalFilter)); // mengambil nama hari dari tanggal filter
-$isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === 'Wednesday' || $dayFilter === 'Thursday' || $dayFilter === 'Friday' || $dayFilter === 'Sunday'; // filter hari apakah termasuk hari masuk sekolah atau libur
+$isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === 'Wednesday' || $dayFilter === 'Thursday' || $dayFilter === 'Friday' || $dayFilter === 'Sunday'; // filter hari, apakah termasuk hari masuk sekolah atau libur
 ?>
 
 <?= $this->section('content') ?>
@@ -255,11 +255,16 @@ $isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === '
               <option value="">Pilih Menu Makanan</option>
               <?php foreach ($daftarMenuMakanan as $menuMakanan): ?>
                 <option value="<?= $menuMakanan['id'] ?>"
+                  data-allergens="<?= strtolower($menuMakanan['food_allergens'] ?? '') ?>"
                   <?= old('menu_makanan') == $menuMakanan['id'] ? 'selected' : '' ?>>
                   <?= $menuMakanan['name'] ?>
                 </option>
               <?php endforeach; ?>
             </select>
+          </div>
+          <div id="allergenWarning" class="alert alert-sm alert-warning d-none" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <strong>PERINGATAN : </strong> Makanan ini mengandung alergen <span id="conflictAllergens" class="fw-bold"></span> yang memicu alergi siswa!
           </div>
           <label for="modalStudentNote" class="form-label">Catatan <small class="text-muted">(jika ada)</small> :</label>
           <textarea class="form-control mb-3" id="modalStudentNote" rows="3" placeholder="Contoh: Alergi, Tidak makan sayur, dll..." <?= !$isEditable ? 'disabled' : '' ?>></textarea>

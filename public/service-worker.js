@@ -30,6 +30,7 @@ const appShellFiles = [
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
   'https://cdn.jsdelivr.net/npm/sweetalert2@11',
   'https://cdn.jsdelivr.net/npm/chart.js',
+  'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0',
 ];
 
 // Event: Install
