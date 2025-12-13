@@ -56,8 +56,8 @@ $currentPage = service('uri')->getSegment(1);
       </li>
     <?php endif; ?>
 
-    <!-- Daftar Makanan | Tambah Makanan -->
     <div id="sidebarAccordion">
+      <!-- Daftar Makanan | Tambah Makanan -->
       <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
         <li class="nav-item mb-2">
           <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-makanan', 'tambah-makanan'], $currentPage) ? 'outline-active' : '' ?>"
@@ -76,6 +76,32 @@ $currentPage = service('uri')->getSegment(1);
               <li class="nav-item">
                 <a href="/tambah-makanan" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-makanan') ? 'active' : '' ?>">
                   Tambah Makanan
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <?php endif; ?>
+
+      <!-- Daftar Allergen | Tambah Allergen -->
+      <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
+        <li class="nav-item mb-2">
+          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'outline-active' : '' ?>"
+            href="#" id="foodManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#foodManagementCollapse"
+            aria-expanded="<?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'true' : 'false' ?>" aria-controls="foodManagementCollapse">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span>Daftar Allergen</span>
+          </a>
+          <div class="collapse <?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'show' : '' ?>" id="foodManagementCollapse" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+              <li class="nav-item mb-2">
+                <a href="/daftar-allergen" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-allergen') ? 'active' : '' ?>">
+                  Daftar Allergen
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/tambah-allergen" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-allergen') ? 'active' : '' ?>">
+                  Tambah Allergen
                 </a>
               </li>
             </ul>

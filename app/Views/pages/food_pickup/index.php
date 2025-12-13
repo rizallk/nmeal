@@ -14,7 +14,7 @@ $date = new IntlDateFormatter(
 
 $now = $date->format(time());
 $dayFilter = date('l', strtotime($tanggalFilter)); // mengambil nama hari dari tanggal filter
-$isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === 'Wednesday' || $dayFilter === 'Thursday' || $dayFilter === 'Friday' || $dayFilter === 'Sunday'; // filter hari, apakah termasuk hari masuk sekolah atau libur
+$isDay = $dayFilter === 'Monday' || $dayFilter === 'Tuesday' || $dayFilter === 'Wednesday' || $dayFilter === 'Thursday' || $dayFilter === 'Friday' || $dayFilter === 'Saturday'; // filter hari, apakah termasuk hari masuk sekolah atau libur
 ?>
 
 <?= $this->section('content') ?>
