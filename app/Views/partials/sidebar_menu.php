@@ -83,25 +83,25 @@ $currentPage = service('uri')->getSegment(1);
         </li>
       <?php endif; ?>
 
-      <!-- Daftar Allergen | Tambah Allergen -->
+      <!-- Daftar Alergen | Tambah Alergen -->
       <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
         <li class="nav-item mb-2">
-          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'outline-active' : '' ?>"
-            href="#" id="foodManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#foodManagementCollapse"
-            aria-expanded="<?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'true' : 'false' ?>" aria-controls="foodManagementCollapse">
+          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-alergen', 'tambah-alergen'], $currentPage) ? 'outline-active' : '' ?>"
+            href="#" id="allergenManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#allergenManagementCollapse"
+            aria-expanded="<?= isDropdownActive(['daftar-alergen', 'tambah-alergen'], $currentPage) ? 'true' : 'false' ?>" aria-controls="allergenManagementCollapse">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span>Daftar Allergen</span>
+            <span>Daftar Alergen</span>
           </a>
-          <div class="collapse <?= isDropdownActive(['daftar-allergen', 'tambah-allergen'], $currentPage) ? 'show' : '' ?>" id="foodManagementCollapse" data-bs-parent="#sidebarAccordion">
+          <div class="collapse <?= isDropdownActive(['daftar-alergen', 'tambah-alergen'], $currentPage) ? 'show' : '' ?>" id="allergenManagementCollapse" data-bs-parent="#sidebarAccordion">
             <ul class="nav flex-column ms-3">
               <li class="nav-item mb-2">
-                <a href="/daftar-allergen" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-allergen') ? 'active' : '' ?>">
-                  Daftar Allergen
+                <a href="/daftar-alergen" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-alergen') ? 'active' : '' ?>">
+                  Daftar Alergen
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/tambah-allergen" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-allergen') ? 'active' : '' ?>">
-                  Tambah Allergen
+                <a href="/tambah-alergen" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-alergen') ? 'active' : '' ?>">
+                  Tambah Alergen
                 </a>
               </li>
             </ul>
@@ -110,57 +110,56 @@ $currentPage = service('uri')->getSegment(1);
       <?php endif; ?>
 
       <!-- Daftar User | Tambah User -->
-      <div id="sidebarAccordion">
-        <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
-          <li class="nav-item mb-2">
-            <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'outline-active' : '' ?>"
-              href="#" id="userManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#userManagementCollapse"
-              aria-expanded="<?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'true' : 'false' ?>" aria-controls="userManagementCollapse">
-              <i class="bi bi-person-lines-fill me-2"></i>
-              <span>Daftar User</span>
-            </a>
-            <div class="collapse <?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'show' : '' ?>" id="userManagementCollapse" data-bs-parent="#sidebarAccordion">
-              <ul class="nav flex-column ms-3">
-                <li class="nav-item mb-2">
-                  <a href="/daftar-user" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-user') ? 'active' : '' ?>">
-                    Daftar User
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/tambah-user" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-user') ? 'active' : '' ?>">
-                    Tambah User
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-        <?php endif; ?>
+      <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
+        <li class="nav-item mb-2">
+          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'outline-active' : '' ?>"
+            href="#" id="userManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#userManagementCollapse"
+            aria-expanded="<?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'true' : 'false' ?>" aria-controls="userManagementCollapse">
+            <i class="bi bi-person-lines-fill me-2"></i>
+            <span>Daftar User</span>
+          </a>
+          <div class="collapse <?= isDropdownActive(['daftar-user', 'tambah-user'], $currentPage) ? 'show' : '' ?>" id="userManagementCollapse" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+              <li class="nav-item mb-2">
+                <a href="/daftar-user" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-user') ? 'active' : '' ?>">
+                  Daftar User
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/tambah-user" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-user') ? 'active' : '' ?>">
+                  Tambah User
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <?php endif; ?>
 
-        <!-- Daftar Siswa | Tambah Siswa -->
-        <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
-          <li class="nav-item mb-2">
-            <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'outline-active' : '' ?>"
-              href="#" id="studentManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#studentManagementCollapse"
-              aria-expanded="<?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'true' : 'false' ?>" aria-controls="studentManagementCollapse">
-              <i class="bi bi-people-fill me-2"></i>
-              <span>Daftar Siswa</span>
-            </a>
-            <div class="collapse <?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'show' : '' ?>" id="studentManagementCollapse" data-bs-parent="#sidebarAccordion">
-              <ul class="nav flex-column ms-3">
-                <li class="nav-item mb-2">
-                  <a href="/daftar-siswa" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-siswa') ? 'active' : '' ?>">
-                    Daftar Siswa
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="/tambah-siswa" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-siswa') ? 'active' : '' ?>">
-                    Tambah Siswa
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-        <?php endif; ?>
-      </div>
+      <!-- Daftar Siswa | Tambah Siswa -->
+      <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
+        <li class="nav-item mb-2">
+          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'outline-active' : '' ?>"
+            href="#" id="studentManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#studentManagementCollapse"
+            aria-expanded="<?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'true' : 'false' ?>" aria-controls="studentManagementCollapse">
+            <i class="bi bi-people-fill me-2"></i>
+            <span>Daftar Siswa</span>
+          </a>
+          <div class="collapse <?= isDropdownActive(['daftar-siswa', 'tambah-siswa'], $currentPage) ? 'show' : '' ?>" id="studentManagementCollapse" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+              <li class="nav-item mb-2">
+                <a href="/daftar-siswa" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-siswa') ? 'active' : '' ?>">
+                  Daftar Siswa
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/tambah-siswa" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-siswa') ? 'active' : '' ?>">
+                  Tambah Siswa
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <?php endif; ?>
+    </div>
   </ul>
 </div>

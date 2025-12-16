@@ -7,10 +7,10 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="edit-allergen">
+<div class="tambah-alergen">
   <?php if (session()->getFlashdata('success')): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <?= session()->getFlashdata('success') ?> <a href="/daftar-allergen">Lihat</a>
+      <?= session()->getFlashdata('success') ?> <a href="/daftar-alergen">Lihat</a>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <?php endif; ?>
@@ -21,17 +21,14 @@
     </div>
   <?php endif; ?>
   <?php $errors = session()->getFlashdata('validation'); ?>
-  <form id="form-register" action="<?= site_url('update-allergen/' . $alergen['id']) ?>" method="post" enctype="multipart/form-data">
+  <form id="form-register" action="<?= site_url('tambah-alergen/register') ?>" method="post">
     <?= csrf_field() ?>
     <div class="row">
-      <div class="col-md-6">
-        <input type="hidden" value="<?= $allergen['name'] ?>" name="old_name">
-        <div class="mb-3">
-          <label for="name" class="form-label">Nama Alergen<span class="text-danger">*</span></label>
-          <input type="text" name="name" class="form-control <?= $errors && isset($errors['name']) ? 'is-invalid' : '' ?>" id="name" placeholder="Nama Allergen" value="<?= old('name', $allergen['name']) ?>" required>
-          <div class="invalid-feedback">
-            <?= $errors && isset($errors['name']) ? $errors['name'] : '' ?>
-          </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">Nama Alergen<span class="text-danger">*</span></label>
+        <input type="text" name="name" class="form-control <?= $errors && isset($errors['name']) ? 'is-invalid' : '' ?>" id="name" placeholder="Nama Alergen" value="<?= old('name') ?>" required>
+        <div class="invalid-feedback">
+          <?= $errors && isset($errors['name']) ? $errors['name'] : '' ?>
         </div>
       </div>
     </div>
@@ -39,7 +36,6 @@
     <div class="d-flex justify-content-end align-items-end h-100 mt-1">
       <button type="submit" class="btn btn-success">Submit</button>
     </div>
-
   </form>
 
   <script>
@@ -50,7 +46,7 @@
 
         Swal.fire({
           title: 'Koneksi Internet Terputus!',
-          text: 'Anda sedang offline. Data tidak dapat dikirim sekarang. Silakan periksa koneksi internet Anda.',
+          text: 'Anda sedang offline. Data tidak dapat dikirim sekarang.',
           icon: 'info',
         })
       }

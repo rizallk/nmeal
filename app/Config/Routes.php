@@ -48,12 +48,12 @@ $routes->post('/update-makanan/(:num)', 'DaftarMakananController::update/$1', ['
 $routes->post('/delete-makanan/(:num)', 'DaftarMakananController::delete/$1', ['filter' => 'authcheck']);
 
 // Daftar allergen
-$routes->get('/daftar-allergen', 'DaftarAllergenController::index', ['filter' => 'authcheck']);
-$routes->get('/tambah-allergen', 'DaftarAllergenController::registerView', ['filter' => 'authcheck']);
-$routes->post('/tambah-allergen/register', 'DaftarAllergenController::register', ['filter' => 'authcheck']);
-$routes->get('/edit-allergen/(:num)', 'DaftarAllergenController::edit/$1', ['filter' => 'authcheck']);
-$routes->post('/update-allergen/(:num)', 'DaftarAllergenController::update/$1', ['filter' => 'authcheck']);
-$routes->post('/delete-allergen/(:num)', 'DaftarAllergenController::delete/$1', ['filter' => 'authcheck']);
+$routes->get('/daftar-alergen', 'DaftarAlergenController::index', ['filter' => 'authcheck']);
+$routes->get('/tambah-alergen', 'DaftarAlergenController::registerView', ['filter' => 'authcheck']);
+$routes->post('/tambah-alergen/register', 'DaftarAlergenController::register', ['filter' => 'authcheck']);
+$routes->get('/edit-alergen/(:num)', 'DaftarAlergenController::edit/$1', ['filter' => 'authcheck']);
+$routes->post('/update-alergen/(:num)', 'DaftarAlergenController::update/$1', ['filter' => 'authcheck']);
+$routes->post('/delete-alergen/(:num)', 'DaftarAlergenController::delete/$1', ['filter' => 'authcheck']);
 
 // Aktivitas makan siswa
 $routes->get('/food-activity', 'FoodActivityStudentController::index', ['filter' => 'authcheck']);

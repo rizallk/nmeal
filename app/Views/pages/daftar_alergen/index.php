@@ -2,54 +2,18 @@
 
 <?= $this->section('styles') ?>
 <style>
-  .daftar-allergen .table .action {
+  .daftar-alergen .table .action {
     width: 100px;
   }
 
-  .daftar-allergen .table tr td {
+  .daftar-alergen .table tr td {
     white-space: nowrap;
-  }
-
-  .daftar-allergen .table th.ingredient {
-    width: 350px;
-  }
-
-  .daftar-allergen .table td.ingredient {
-    position: relative;
-    max-width: 350px;
-    vertical-align: middle;
-  }
-
-  .daftar-allergen .table td.ingredient span {
-    display: block;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .daftar-allergen .table th.allergen {
-    width: 350px;
-  }
-
-  .daftar-allergen .table td.allergen {
-    position: relative;
-    max-width: 350px;
-    vertical-align: middle;
-  }
-
-  .daftar-allergen .table td.allergen span {
-    display: block;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 </style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="daftar-allergen">
+<div class="daftar-alergen">
   <?php if (session()->getFlashdata('success')): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
       <?= session()->getFlashdata('success') ?>
@@ -63,7 +27,7 @@
     </div>
   <?php endif; ?>
   <div class="header mb-1">
-    <form id="search-form" action="<?= site_url('daftar-allergen') ?>" method="get">
+    <form id="search-form" action="<?= site_url('daftar-alergen') ?>" method="get">
       <div class="row">
         <div class="col-md">
           <div class="input-group input-group mb-3">
@@ -71,7 +35,7 @@
             <input type="search" class="form-control" name="search" value="<?= esc($search) ?>" placeholder="Cari nama atau yang lain...">
             <button class="btn btn-success" type="submit">Cari</button>
             <?php if (!empty($search)): ?>
-              <a href="<?= clear_spesific_filter_helper('daftar-allergen', $currentFilters, 'search') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+              <a href="<?= clear_spesific_filter_helper('daftar-alergen', $currentFilters, 'search') ?>" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
             <?php endif; ?>
           </div>
         </div>
@@ -84,23 +48,23 @@
         <tr>
           <th style="width: 40px;">No</th>
           <th>
-            <a href="<?= buildSortLink('daftar-allergen', 'name', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
-              Nama Allergen <?= getSortIcon('name', $sortColumn, $sortOrder) ?>
+            <a href="<?= buildSortLink('daftar-alergen', 'name', $sortColumn, $sortOrder, $currentFilters) ?>" class="text-dark text-decoration-none">
+              Nama Alergen <?= getSortIcon('name', $sortColumn, $sortOrder) ?>
             </a>
           </th>
           <th class="text-center action">Aksi</th>
         </tr>
       </thead>
       <tbody>
-        <?php if (!empty($daftarAllergen)): ?>
+        <?php if (!empty($daftarAlergen)): ?>
           <?php $no = $startNumber; ?>
-          <?php foreach ($daftarAllergen as $allergen): ?>
+          <?php foreach ($daftarAlergen as $allergen): ?>
             <tr>
               <td><?= ++$no ?></td>
               <td><?= esc($allergen['name']) ?></td>
               <td class="text-center">
-                <a href="<?= site_url('edit-allergen/' . $allergen['id']) ?>" class="text-warning me-2">Edit</a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-allergen-id="<?= $allergen['id'] ?>" data-allergen-name="<?= esc($allergen['name']) ?>" title="Hapus Allergen" class="text-danger">Hapus</a>
+                <a href="<?= site_url('edit-alergen/' . $allergen['id']) ?>" class="text-warning me-2">Edit</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" data-allergen-id="<?= $allergen['id'] ?>" data-allergen-name="<?= esc($allergen['name']) ?>" title="Hapus Alergen" class="text-danger">Hapus</a>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -122,13 +86,13 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2"></i> Konfirmasi Hapus Allegen</h5>
+          <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2"></i> Konfirmasi Hapus Alergen</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="deleteForm" method="post">
           <?= csrf_field() ?>
           <div class="modal-body">
-            <p>Apakah Anda yakin ingin menghapus allergen <strong id="studentName"></strong>?</p>
+            <p>Apakah Anda yakin ingin menghapus alergen <strong id="allergenName"></strong>?</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -167,7 +131,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       const deleteModal = document.getElementById('deleteModal');
       const deleteForm = document.getElementById('deleteForm');
-      const studentNameElement = document.getElementById('studentName');
+      const allergenNameElement = document.getElementById('allergenName');
 
       if (deleteModal) {
         deleteModal.addEventListener('show.bs.modal', function(event) {
@@ -175,14 +139,14 @@
           const button = event.relatedTarget;
 
           // Ambil data ID dan Nama dari tombol
-          const studentId = button.getAttribute('data-allergen-id');
-          const studentName = button.getAttribute('data-allergen-name');
+          const allergenId = button.getAttribute('data-allergen-id');
+          const allergenName = button.getAttribute('data-allergen-name');
 
           // Perbarui konten modal
-          studentNameElement.textContent = studentName;
+          allergenNameElement.textContent = allergenName;
 
           // Set URL action untuk form delete
-          deleteForm.setAttribute('action', '<?= site_url('delete-allergen') ?>/' + studentId);
+          deleteForm.setAttribute('action', '<?= site_url('delete-alergen') ?>/' + allergenId);
         });
       }
     });

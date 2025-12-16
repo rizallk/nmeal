@@ -3,9 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRecommendationUI();
 });
 
-// ==========================================
 // NOTIFIKASI (PUSH NOTIFICATION)
-// ==========================================
 const btnNotif = document.getElementById('btnNotif');
 const textNotif = document.getElementById('textNotif');
 const iconNotif = document.getElementById('iconNotif');
@@ -173,9 +171,7 @@ async function subscribeUserToPush() {
   }
 }
 
-// ==========================================
-// 2. REKOMENDASI AI
-// ==========================================
+// REKOMENDASI AI
 const tipsHeader = document.getElementById('tipsHeader');
 const tipsContent = document.getElementById('tipsContent');
 const statusVal = document.getElementById('status')

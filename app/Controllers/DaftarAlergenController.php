@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\AllergenModel;
 use App\Models\UserModel;
 
-class DaftarAllergenController extends BaseController
+class DaftarAlergenController extends BaseController
 {
   protected $allergenModel;
   protected $userModel;
@@ -53,8 +53,8 @@ class DaftarAllergenController extends BaseController
     $currentFilters = array_filter($currentFilters);
 
     $data = [
-      'pageTitle' => 'Daftar Allergen',
-      'daftarAllergen' => $query->paginate($perPage, 'default', $currentPage),
+      'pageTitle' => 'Daftar Alergen',
+      'daftarAlergen' => $query->paginate($perPage, 'default', $currentPage),
       'pager' => $this->allergenModel->pager,
       'search' => $search,
       'sortColumn' => $sortColumn,
@@ -63,9 +63,9 @@ class DaftarAllergenController extends BaseController
       'currentFilters' => $currentFilters
     ];
 
-    $data['pager']->setPath('daftar-allergen', 'default');
+    $data['pager']->setPath('daftar-alergen', 'default');
 
-    return view('pages/daftar_allergen/index', $data);
+    return view('pages/daftar_alergen/index', $data);
   }
 
   public function registerView()
@@ -73,10 +73,10 @@ class DaftarAllergenController extends BaseController
     if ($this->userRole !== 'admin') return redirect()->back();
 
     $data = [
-      'pageTitle' => 'Tambah Allergen',
+      'pageTitle' => 'Tambah Alergen',
     ];
 
-    return view('pages/daftar_allergen/tambah', $data);
+    return view('pages/daftar_alergen/tambah', $data);
   }
 
   public function register()
@@ -90,7 +90,7 @@ class DaftarAllergenController extends BaseController
       return redirect()->back()->withInput()->with('validation', $this->allergenModel->errors());
     }
 
-    return redirect()->to('/tambah-allergen')->with('success', 'Tambah allergen "' . $this->request->getPost('name') . '" berhasil!');
+    return redirect()->to('/tambah-alergen')->with('success', 'Tambah alergen "' . $this->request->getPost('name') . '" berhasil!');
   }
 
   public function edit(int $id)
@@ -98,15 +98,15 @@ class DaftarAllergenController extends BaseController
     $allergen  = $this->allergenModel->find($id);
 
     if (!$allergen) {
-      return redirect()->back()->with('error', 'Nama allergen tidak ditemukan.');
+      return redirect()->back()->with('error', 'Nama alergen tidak ditemukan.');
     }
 
     $data = [
-      'pageTitle' => 'Edit alleergen - ' . $allergen['name'],
+      'pageTitle' => 'Edit Alergen - ' . $allergen['name'],
       'allergen'  => $allergen
     ];
 
-    return view('pages/daftar_allergen/edit', $data);
+    return view('pages/daftar_alergen/edit', $data);
   }
 
   public function update(int $id)
@@ -114,7 +114,7 @@ class DaftarAllergenController extends BaseController
     $allergen = $this->allergenModel->find($id);
 
     if (!$allergen) {
-      return redirect()->back()->with('error', 'Nama Allergen tidak ditemukan.');
+      return redirect()->back()->with('error', 'Nama alergen tidak ditemukan.');
     }
 
 
@@ -130,7 +130,7 @@ class DaftarAllergenController extends BaseController
 
     $namaUpdated = $this->request->getPost('name');
 
-    return redirect()->back()->with('success', 'Allergen "' . esc($namaUpdated) . '" berhasil diupdate.');
+    return redirect()->back()->with('success', 'Alergen "' . esc($namaUpdated) . '" berhasil diupdate.');
   }
 
   public function delete(int $id)
@@ -143,11 +143,11 @@ class DaftarAllergenController extends BaseController
     $allergen = $this->allergenModel->find($id);
 
     if (!$allergen) {
-      return redirect()->back()->with('error', 'allergen tidak ditemukan.');
+      return redirect()->back()->with('error', 'alergen tidak ditemukan.');
     }
 
     $this->allergenModel->delete($id);
 
-    return redirect()->back()->with('success', 'Allergen "' . esc($allergen['name']) . '" berhasil dihapus.');
+    return redirect()->back()->with('success', 'Alergen "' . esc($allergen['name']) . '" berhasil dihapus.');
   }
 }
