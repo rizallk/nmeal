@@ -55,6 +55,14 @@ $routes->get('/edit-alergen/(:num)', 'DaftarAlergenController::edit/$1', ['filte
 $routes->post('/update-alergen/(:num)', 'DaftarAlergenController::update/$1', ['filter' => 'authcheck']);
 $routes->post('/delete-alergen/(:num)', 'DaftarAlergenController::delete/$1', ['filter' => 'authcheck']);
 
+// Daftar bahan makanan
+$routes->get('/daftar-bahan-makanan', 'DaftarBahanMakananController::index', ['filter' => 'authcheck']);
+$routes->get('/tambah-bahan-makanan', 'DaftarBahanMakananController::registerView', ['filter' => 'authcheck']);
+$routes->post('/tambah-bahan-makanan/register', 'DaftarBahanMakananController::register', ['filter' => 'authcheck']);
+$routes->get('/edit-bahan-makanan/(:num)', 'DaftarBahanMakananController::edit/$1', ['filter' => 'authcheck']);
+$routes->post('/update-bahan-makanan/(:num)', 'DaftarBahanMakananController::update/$1', ['filter' => 'authcheck']);
+$routes->post('/delete-bahan-makanan/(:num)', 'DaftarBahanMakananController::delete/$1', ['filter' => 'authcheck']);
+
 // Aktivitas makan siswa
 $routes->get('/food-activity', 'FoodActivityStudentController::index', ['filter' => 'authcheck']);
 

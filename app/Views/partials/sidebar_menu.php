@@ -83,6 +83,32 @@ $currentPage = service('uri')->getSegment(1);
         </li>
       <?php endif; ?>
 
+      <!-- Daftar bahan makanan | Tambah bahan makanan -->
+      <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
+        <li class="nav-item mb-2">
+          <a class="nav-link rounded d-flex dropdown-toggle mb-2 <?= isDropdownActive(['daftar-bahan-makanan', 'tambah-bahan-makanan'], $currentPage) ? 'outline-active' : '' ?>"
+            href="#" id="ingredientManagementDropdown" role="button" data-bs-toggle="collapse" data-bs-target="#ingredientManagementCollapse"
+            aria-expanded="<?= isDropdownActive(['daftar-bahan-makanan', 'tambah-bahan-makanan'], $currentPage) ? 'true' : 'false' ?>" aria-controls="ingredientManagementCollapse">
+            <i class="bi bi-egg-fried me-2"></i>
+            <span>Daftar Bahan</br>Makanan</span>
+          </a>
+          <div class="collapse <?= isDropdownActive(['daftar-bahan-makanan', 'tambah-bahan-makanan'], $currentPage) ? 'show' : '' ?>" id="ingredientManagementCollapse" data-bs-parent="#sidebarAccordion">
+            <ul class="nav flex-column ms-3">
+              <li class="nav-item mb-2">
+                <a href="/daftar-bahan-makanan" class="nav-link rounded d-flex <?= ($currentPage == 'daftar-bahan-makanan') ? 'active' : '' ?>">
+                  Daftar Bahan Makanan
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/tambah-bahan-makanan" class="nav-link rounded d-flex <?= ($currentPage == 'tambah-bahan-makanan') ? 'active' : '' ?>">
+                  Tambah Bahan Makanan
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      <?php endif; ?>
+
       <!-- Daftar Alergen | Tambah Alergen -->
       <?php if (session()->get('userRole') == 'admin' || session()->get('userRole') == 'guru'): ?>
         <li class="nav-item mb-2">
