@@ -20,7 +20,7 @@ class DaftarAlergenController extends BaseController
 
   public function index()
   {
-    if ($this->userRole != 'admin') return redirect()->back();
+    if ($this->userRole == 'ortu') return redirect()->back();
 
     $search = $this->request->getGet('search') ?? '';
     $sortColumn = $this->request->getGet('sort-by') ?? 'name';
@@ -70,7 +70,7 @@ class DaftarAlergenController extends BaseController
 
   public function registerView()
   {
-    if ($this->userRole !== 'admin') return redirect()->back();
+    if ($this->userRole == 'ortu') return redirect()->back();
 
     $data = [
       'pageTitle' => 'Tambah Alergen',
@@ -82,6 +82,7 @@ class DaftarAlergenController extends BaseController
   public function register()
   {
 
+    if ($this->userRole == 'ortu') return redirect()->back();
     $dataFood = [
       'name' => $this->request->getPost('name'),
     ];
@@ -95,6 +96,7 @@ class DaftarAlergenController extends BaseController
 
   public function edit(int $id)
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     $allergen  = $this->allergenModel->find($id);
 
     if (!$allergen) {
@@ -111,6 +113,7 @@ class DaftarAlergenController extends BaseController
 
   public function update(int $id)
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     $allergen = $this->allergenModel->find($id);
 
     if (!$allergen) {
@@ -135,6 +138,7 @@ class DaftarAlergenController extends BaseController
 
   public function delete(int $id)
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     if ($this->request->getMethod() !== 'POST') {
       return redirect()->back()->with('error', 'Metode penghapusan tidak valid. Harap gunakan tombol Hapus.');
     }

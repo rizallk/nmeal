@@ -14,6 +14,7 @@ use Minishlink\WebPush\WebPush;
 
 class FoodPickupController extends BaseController
 {
+  protected $userRole;
   protected $foodPickupModel;
   protected $studentModel;
   protected $foodModel;
@@ -21,6 +22,7 @@ class FoodPickupController extends BaseController
 
   public function __construct()
   {
+    $this->userRole = session()->get('userRole');
     $this->foodPickupModel = new FoodPickupModel();
     $this->studentModel = new StudentModel();
     $this->foodModel = new FoodModel();
@@ -77,6 +79,7 @@ class FoodPickupController extends BaseController
 
   public function index()
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     $search = $this->request->getGet('search') ?? '';
     $kelasFilter = $this->request->getGet('kelas') ?? '';
     $tanggalFilter = $this->request->getGet('tanggal') ?? date("Y-m-d");
@@ -120,6 +123,7 @@ class FoodPickupController extends BaseController
 
   public function exportPdf()
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     $search = $this->request->getGet('search') ?? '';
     $kelasFilter = $this->request->getGet('kelas') ?? '';
     $tanggalFilter = $this->request->getGet('tanggal') ?? date("Y-m-d");
@@ -155,6 +159,7 @@ class FoodPickupController extends BaseController
 
   public function save()
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     // Cek apakah request berupa JSON (dari fetch API/PWA)
     if ($this->request->isAJAX() || $this->request->getHeaderLine('Content-Type') == 'application/json') {
       $json = $this->request->getJSON(true); // Ambil raw body JSON sebagai array
@@ -289,6 +294,7 @@ class FoodPickupController extends BaseController
 
   public function getStudentAllergens($studentId)
   {
+    if ($this->userRole == 'ortu') return redirect()->back();
     $allergens = $this->studentAllergenModel
       ->select('allergens.name')
       ->join('allergens', 'allergens.id = student_allergens.allergen_id')

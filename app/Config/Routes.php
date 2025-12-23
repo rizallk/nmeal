@@ -69,3 +69,7 @@ $routes->get('/food-activity', 'FoodActivityStudentController::index', ['filter'
 // Notification
 $routes->post('/notification/subscribe', 'NotificationController::subscribe', ['filter' => 'authcheck']);
 $routes->get('/notification/get-public-key', 'NotificationController::getPublicKey', ['filter' => 'authcheck']);
+
+// Profile
+$routes->get('/profile', 'ProfileController::index', ['filter' => 'authcheck']);
+$routes->post('/update-profile/(:num)', 'ProfileController::update/$1', ['filter' => 'authcheck']);

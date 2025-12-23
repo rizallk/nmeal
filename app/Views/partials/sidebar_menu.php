@@ -46,12 +46,12 @@ $currentPage = service('uri')->getSegment(1);
       </li>
     <?php endif; ?>
 
-    <!-- Profil -->
+    <!-- Profile -->
     <?php if (session()->get('userRole') == 'ortu'): ?>
       <li class="nav-item mb-2">
-        <a href="/profil" class="nav-link rounded d-flex <?= ($currentPage == 'profil') ? 'active' : '' ?>">
+        <a href="/profile" class="nav-link rounded d-flex <?= ($currentPage == 'profile') ? 'active' : '' ?>">
           <i class="bi bi-person-fill me-2"></i>
-          <span>Profil</span>
+          <span>Profile</span>
         </a>
       </li>
     <?php endif; ?>

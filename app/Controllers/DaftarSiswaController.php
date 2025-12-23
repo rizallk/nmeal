@@ -102,6 +102,7 @@ class DaftarSiswaController extends BaseController
 
   public function register()
   {
+    if ($this->userRole != 'admin') return redirect()->back();
     $db = \Config\Database::connect(); // Instance database
     $db->transBegin();
 
@@ -162,6 +163,7 @@ class DaftarSiswaController extends BaseController
 
   public function edit(int $id)
   {
+    if ($this->userRole != 'admin') return redirect()->back();
     $siswa = $this->studentModel->find($id);
 
     if (!$siswa) {
@@ -180,6 +182,7 @@ class DaftarSiswaController extends BaseController
 
   public function update(int $id)
   {
+    if ($this->userRole != 'admin') return redirect()->back();
     $siswa = $this->studentModel->find($id);
 
     if (!$siswa) {
@@ -261,6 +264,7 @@ class DaftarSiswaController extends BaseController
 
   public function delete(int $id)
   {
+    if ($this->userRole != 'admin') return redirect()->back();
     if ($this->request->getMethod() !== 'POST') {
       return redirect()->back()->with('error', 'Metode penghapusan tidak valid. Harap gunakan tombol Hapus.');
     }

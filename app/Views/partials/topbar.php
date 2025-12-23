@@ -27,7 +27,7 @@
           <?php endif; ?>
         </div>
         <ul class="dropdown-menu shadow dropdown-menu-end">
-          <li><a class="dropdown-item" href="#">Lihat Profil</a></li>
+          <li><a class="dropdown-item" href="/profile">Lihat Profil</a></li>
           <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Keluar</a></li>
         </ul>
       </div>

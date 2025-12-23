@@ -17,7 +17,7 @@ class UserModel extends Model
     'nama_lengkap' => 'required|min_length[3]|max_length[50]',
     'role' => 'required',
     'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
-    'password' => 'required|min_length[6]|max_length[50]',
+    'password' => 'required|min_length[4]|max_length[50]',
     'foto' => 'permit_empty|is_image[foto]|mime_in[foto,image/jpg,image/jpeg,image/png]|max_size[foto,2048]',
   ];
 
@@ -38,7 +38,7 @@ class UserModel extends Model
     ],
     'password' => [
       'required' => 'Password wajib diisi',
-      'min_length' => 'Password minimal 6 karakter.',
+      'min_length' => 'Password minimal 4 karakter.',
       'max_length' => 'Password maksimal 50 karakter.'
     ],
     'foto' => [

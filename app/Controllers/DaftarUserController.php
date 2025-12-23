@@ -121,6 +121,7 @@ class DaftarUserController extends BaseController
 
   public function edit(int $id)
   {
+    if ($this->userRole !== 'admin') return redirect()->back();
     $user = $this->userModel->find($id);
 
     if (!$user) {
@@ -140,6 +141,7 @@ class DaftarUserController extends BaseController
 
   public function update(int $id)
   {
+    if ($this->userRole !== 'admin') return redirect()->back();
     $user = $this->userModel->find($id);
 
     if (!$user) {
@@ -195,6 +197,7 @@ class DaftarUserController extends BaseController
 
   public function delete(int $id)
   {
+    if ($this->userRole !== 'admin') return redirect()->back();
     // Pastikan method yang digunakan adalah POST dari form
     if ($this->request->getMethod() !== 'POST') {
       return redirect()->back()->with('error', 'Metode penghapusan tidak valid. Harap gunakan tombol Hapus.');
